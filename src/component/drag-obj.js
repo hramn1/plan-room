@@ -22,8 +22,7 @@ export class DragObj {
         this.planGrid.addEventListener('drop',(evt)=>{
             let el = Array.from(this.elements).filter((item)=> item.children[0].dataset.id===evt.dataTransfer.getData('id'));
             evt.stopPropagation();
-            console.log(el[0])
-            this.planGrid.appendChild(el[0]);
+            planContainer.createElements(el[0], evt.target)
         })
 
     }

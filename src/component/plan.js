@@ -11,7 +11,8 @@ export class Plan {
     }
     createElements(element){
         console.log(element)
-        // let p_prime = element.cloneNode(true);
+        let p_prime = element.cloneNode(true);
+        this.planGrid.append(p_prime)
 
     }
     deleteElements(element){
