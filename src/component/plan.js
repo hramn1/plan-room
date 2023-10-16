@@ -5,23 +5,21 @@ export class Plan {
         this.planCell = planCell;
         this.planCellBusy = [];
         this.btnReset = document.querySelector('.scheduler__action-reset');
-        this.btnDeleteElement = document.querySelectorAll('.figure__button-delete');
         this.objElements = this.planGrid.querySelectorAll('.objects__item');
         this.size = 66;
-        this.button = '    <svg class="figure__button figure__button-rotate" fill="currentColor" height="1em" width="1em">\n' +
-            '      <use xlink:href="#rotate-icon"></use>\n' +
-            '    </svg>\n' +
-            '\n' +
-            '    <svg class="figure__button figure__button-delete" fill="currentColor" height="1em" width="1em">\n' +
-            '      <use xlink:href="#delete-icon"></use>\n' +
-            '    </svg>'
+        this.button = `<svg class="figure__button figure__button-rotate" fill="currentColor" height="1em" width="1em"> 
+        <use xlink:href="#rotate-icon"></use> </svg>
+         <svg class="figure__button figure__button-delete" fill="currentColor" height="1em" width="1em">
+         <use xlink:href="#delete-icon"></use>
+            </svg>`
     }
     createElements(element){
         console.log(element)
         let p_prime = element.cloneNode(true);
         p_prime.removeChild(p_prime.querySelector('.object__name'));
-        p_prime.children[0].children[0].innerHTML = this.button
+        p_prime.children[0].children[0].innerHTML = this.button;
         this.planGrid.append(p_prime);
+        this.updatePlan();
     }
     deleteElements(element){
         this.objElements.forEach((item)=>{
@@ -43,13 +41,16 @@ export class Plan {
             item.remove();
         })
     }
-    init(){
-        this.btnDeleteElement.forEach((item)=>{
+    updatePlan() {
+        const btnDeleteElement = document.querySelectorAll('.figure__button-delete');
+        btnDeleteElement.forEach((item)=>{
             item.addEventListener('click',(evt)=>{
                 this.deleteElements(evt.currentTarget.parentNode.parentNode)
             })
         })
-        // this.resetRoom()
+    }
+    init(){
+        this.updatePlan()
         this.btnReset.addEventListener('click', ()=>this.resetRoom())
     }
 }
