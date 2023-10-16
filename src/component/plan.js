@@ -13,19 +13,18 @@ export class Plan {
          <use xlink:href="#delete-icon"></use>
             </svg>`
     }
-    createElements(element){
+    createElements(element, dropElement){
         let p_prime = element.cloneNode(true);
         p_prime.removeChild(p_prime.querySelector('.object__name'));
         p_prime.children[0].children[0].innerHTML = this.button;
+        p_prime.style.left = (dropElement.dataset.x - 1) * this.size + 'px';
+        p_prime.style.top = (dropElement.dataset.y - 1) * this.size + 'px'
         this.planGrid.append(p_prime);
         this.updatePlan();
     }
-    deleteElements(element){
-        console.log(4)
-        this.objElements.forEach((item)=>{
-            if(item.dataset.id ===  element.dataset.id){
+    deleteElements(element, objElements){
+        objElements.forEach((item)=>{
                 item.remove();
-            }
         })
     }
     resetRoom() {
@@ -43,9 +42,11 @@ export class Plan {
     }
     updatePlan() {
         const btnDeleteElement = document.querySelectorAll('.figure__button-delete');
+        const objElements = this.planGrid.querySelectorAll('.objects__item');
         btnDeleteElement.forEach((item)=>{
             item.addEventListener('click',(evt)=>{
-                this.deleteElements(evt.currentTarget.parentNode.parentNode)
+                evt.currentTarget.parentNode.parentNode.remove();
+                // this.deleteElements(evt.currentTarget.parentNode.parentNode, objElements)
             })
         })
     }
