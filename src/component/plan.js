@@ -14,7 +14,6 @@ export class Plan {
             </svg>`
     }
     createElements(element){
-        console.log(element)
         let p_prime = element.cloneNode(true);
         p_prime.removeChild(p_prime.querySelector('.object__name'));
         p_prime.children[0].children[0].innerHTML = this.button;
@@ -22,6 +21,7 @@ export class Plan {
         this.updatePlan();
     }
     deleteElements(element){
+        console.log(4)
         this.objElements.forEach((item)=>{
             if(item.dataset.id ===  element.dataset.id){
                 item.remove();

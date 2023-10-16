@@ -20,7 +20,7 @@ export class DragObj {
             event.preventDefault();
         });
         this.planGrid.addEventListener('drop',(evt)=>{
-            let el = Array.from(this.elements).filter((item)=> item.children[0].dataset.id===evt.dataTransfer.getData('id'));
+            let el = Array.from(this.elements).filter((item)=> item.children[0].dataset.id === evt.dataTransfer.getData('id'));
             evt.stopPropagation();
             planContainer.createElements(el[0], evt.target)
         })
