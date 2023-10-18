@@ -38,9 +38,20 @@ export class Plan {
     }
     updatePlan() {
         const btnDeleteElement = document.querySelectorAll('.figure__button-delete');
+        const btnRotateElement = document.querySelectorAll('.figure__button-rotate');
         btnDeleteElement.forEach((item)=>{
             item.addEventListener('click',(evt)=> {
                 evt.currentTarget.parentNode.parentNode.parentNode.remove();
+            })
+        })
+        btnRotateElement.forEach((item)=>{
+            item.addEventListener('click',(evt)=> {
+                let elementTarget =  evt.currentTarget.parentNode.parentNode.parentNode;
+                if(!elementTarget.classList.contains('objects__item-rotated')){
+                    elementTarget.classList.add('objects__item-rotated');
+                } else {
+                    elementTarget.classList.remove('objects__item-rotated');
+                }
             })
         })
     }
