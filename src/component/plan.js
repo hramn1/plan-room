@@ -20,7 +20,7 @@ export class Plan {
         elementClone.children[0].removeAttribute('draggable');
         elementClone.style.left = (dropElement.dataset.x - 1) * this.size + 'px';
         elementClone.style.top = (dropElement.dataset.y - 1) * this.size + 'px';
-        this.planCellBusy.push([dropElement.dataset.x,dropElement.dataset.y]);
+        this.planCellBusy.push({id: 1, x: dropElement.dataset.x, y: dropElement.dataset.y, size: 3});
         this.planGrid.append(elementClone);
         this.updatePlan();
     }
