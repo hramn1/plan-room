@@ -17,8 +17,10 @@ export class Plan {
         let elementClone = element.cloneNode(true);
         elementClone.removeChild(elementClone.querySelector('.object__name'));
         elementClone.children[0].children[0].innerHTML = this.button;
+        elementClone.children[0].removeAttribute('draggable');
         elementClone.style.left = (dropElement.dataset.x - 1) * this.size + 'px';
         elementClone.style.top = (dropElement.dataset.y - 1) * this.size + 'px';
+        this.planCellBusy.push([dropElement.dataset.x,dropElement.dataset.y]);
         this.planGrid.append(elementClone);
         this.updatePlan();
     }
@@ -36,6 +38,9 @@ export class Plan {
             item.remove();
         })
     }
+    checkPossibilityRotate(){
+        console.log(this.planCellBusy)
+    }
     updatePlan() {
         const btnDeleteElement = document.querySelectorAll('.figure__button-delete');
         const btnRotateElement = document.querySelectorAll('.figure__button-rotate');
@@ -49,6 +54,7 @@ export class Plan {
                 let elementTarget =  evt.currentTarget.parentNode.parentNode.parentNode;
                 if(!elementTarget.classList.contains('objects__item-rotated')){
                     elementTarget.classList.add('objects__item-rotated');
+                    this.checkPossibilityRotate()
                 } else {
                     elementTarget.classList.remove('objects__item-rotated');
                 }

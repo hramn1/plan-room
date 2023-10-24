@@ -16,7 +16,9 @@ export class DragObj {
     dragenter(){
         this.planCell.forEach((it)=>{
             it.addEventListener("dragenter", () => {
-                it.classList.add('plan__cell_success');
+                if(!it.classList.contains('plan__cell_error')) {
+                    it.classList.add('plan__cell_success');
+                }
             });
         })
     }
