@@ -13,14 +13,17 @@ export class Plan {
                         <use xlink:href="#delete-icon"></use>
                        </svg>`
     }
-    createElements(element, dropElement){
+    createElements(element, dropElement, xCord){
         let elementClone = element.cloneNode(true);
         elementClone.removeChild(elementClone.querySelector('.object__name'));
         elementClone.children[0].children[0].innerHTML = this.button;
         elementClone.children[0].removeAttribute('draggable');
-        elementClone.style.left = (dropElement.dataset.x - 1) * this.size + 'px';
-        elementClone.style.top = (dropElement.dataset.y - 1) * this.size + 'px';
-        this.planCellBusy.push({id: generateRandomIndex(0,150), x: dropElement.dataset.x, y: dropElement.dataset.y, size: 3});
+
+        if(xCord > 66){
+            elementClone.style.left = (dropElement.dataset.x - 2) * this.size + 'px';
+            elementClone.style.top = (dropElement.dataset.y - 1) * this.size + 'px';
+        }
+
         this.planGrid.append(elementClone);
         this.updatePlan();
     }

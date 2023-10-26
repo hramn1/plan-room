@@ -1,23 +1,44 @@
 import {Plan} from "./plan.js";
-
+import {elementsInDrag} from "../data.js"
 export class DragObj {
     constructor(draggableObjElements, planCell, planGrid) {
         this.elementsDrag = draggableObjElements;
         this.planCell = planCell;
         this.planGrid = planGrid;
+        this.xCord = 0;
+        this.yCord = 0;
+        this.size;
     }
     startDrag(){
         this.elementsDrag.forEach((item)=>{
             item.addEventListener('dragstart',(evt)=>{
-                evt.dataTransfer.setData('id', evt.target.dataset.id)
+                let rect = evt.target.getBoundingClientRect();
+                this.xCord = evt.clientX - rect.left; //x position within the element.
+                this.yCord = evt.clientY - rect.top;  //y position within the element.
+                if(elementsInDrag.sizeOne.includes(evt.target.dataset.id)){
+                    this.size = 1;
+                }
+                evt.dataTransfer.setData('id', evt.target.dataset.id);
+                // evt.dataTransfer.setData('x', x.toString());
+                // evt.dataTransfer.setData('y', y.toString());
             })
         })
     }
     dragenter(){
         this.planCell.forEach((it)=>{
-            it.addEventListener("dragenter", () => {
+            it.addEventListener("dragover", () => {
                 if(!it.classList.contains('plan__cell_error')) {
-                    it.classList.add('plan__cell_success');
+                    if(this.size === 1){
+                       it.classList.add('plan__cell_success');
+                    }
+                    else if(this.xCord > 66){
+                        this.planCell.forEach((item)=> {
+                            if(Number(item.dataset.x) === it.dataset.x -1 && Number(item.dataset.y === it.dataset.y)){
+                                item.classList.add('plan__cell_success');
+                                it.classList.add('plan__cell_success');
+                            }
+                        })
+                    }
                 }
             });
         })
@@ -25,7 +46,17 @@ export class DragObj {
     dragleave(){
         this.planCell.forEach((it)=>{
             it.addEventListener("dragleave", () => {
-                it.classList.remove('plan__cell_success');
+                if(this.size === 1){
+                    it.classList.remove('plan__cell_success');
+                }
+                else if(this.xCord > 66){
+                    // it.classList.remove('plan__cell_success');
+                    this.planCell.forEach((item)=> {
+                        if(Number(item.dataset.y === it.dataset.y)){
+                            item.classList.remove('plan__cell_success');
+                        }
+                    })
+                }
             });
         })
     }
@@ -37,7 +68,7 @@ export class DragObj {
             const elementDrop = Array.from(this.elementsDrag).filter((item)=> item.children[0].dataset.id === evt.dataTransfer.getData('id'));
             evt.stopPropagation();
             if(evt.target.classList.contains('plan__cell_success')) {
-                planContainer.createElements(elementDrop[0], evt.target);
+                planContainer.createElements(elementDrop[0], evt.target, this.xCord);
                 evt.target.classList.remove('plan__cell_success');
             }
         })
@@ -47,8 +78,8 @@ export class DragObj {
         const planContainer= new Plan(this.planGrid, this.planCell);
         planContainer.init();
         this.startDrag();
-        this.dragenter();
         this.dragleave();
+        this.dragenter();
         this.drop(planContainer);
     }
 }
