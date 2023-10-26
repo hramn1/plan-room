@@ -13,12 +13,15 @@ export class Plan {
                         <use xlink:href="#delete-icon"></use>
                        </svg>`
     }
-    createElements(element, dropElement, xCord){
+    createElements(element, dropElement, xCord, size){
         let elementClone = element.cloneNode(true);
         elementClone.removeChild(elementClone.querySelector('.object__name'));
         elementClone.children[0].children[0].innerHTML = this.button;
         elementClone.children[0].removeAttribute('draggable');
-
+        if(size === 1){
+            elementClone.style.left = (dropElement.dataset.x - 1) * this.size + 'px';
+            elementClone.style.top = (dropElement.dataset.y - 1) * this.size + 'px';
+        }
         if(xCord > 66){
             elementClone.style.left = (dropElement.dataset.x - 2) * this.size + 'px';
             elementClone.style.top = (dropElement.dataset.y - 1) * this.size + 'px';
