@@ -11,18 +11,21 @@ export class Plan {
                        </svg>
                        <svg class="figure__button figure__button-delete" fill="currentColor" height="1em" width="1em">
                         <use xlink:href="#delete-icon"></use>
+                       </svg>`;
+        this.buttonOneSize = `<svg class="figure__button figure__button-delete" fill="currentColor" height="1em" width="1em">
+                        <use xlink:href="#delete-icon"></use>
                        </svg>`
     }
     createElements(element, dropElement, xCord, size){
         let elementClone = element.cloneNode(true);
         elementClone.removeChild(elementClone.querySelector('.object__name'));
-        elementClone.children[0].children[0].innerHTML = this.button;
         elementClone.children[0].removeAttribute('draggable');
         if(size === 1){
+            elementClone.children[0].children[0].innerHTML = this.buttonOneSize;
             elementClone.style.left = (dropElement.dataset.x - 1) * this.size + 'px';
             elementClone.style.top = (dropElement.dataset.y - 1) * this.size + 'px';
-        }
-        if(xCord > 66){
+        } else if(size === 2 && xCord > 66){
+            elementClone.children[0].children[0].innerHTML = this.button;
             elementClone.style.left = (dropElement.dataset.x - 2) * this.size + 'px';
             elementClone.style.top = (dropElement.dataset.y - 1) * this.size + 'px';
         }

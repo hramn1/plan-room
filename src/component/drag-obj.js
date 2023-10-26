@@ -7,7 +7,7 @@ export class DragObj {
         this.planGrid = planGrid;
         this.xCord = 0;
         this.yCord = 0;
-        this.size;
+        this.size = 2;
     }
     startDrag(){
         this.elementsDrag.forEach((item)=>{
@@ -17,6 +17,10 @@ export class DragObj {
                 this.yCord = evt.clientY - rect.top;  //y position within the element.
                 if(elementsInDrag.sizeOne.includes(evt.target.dataset.id)){
                     this.size = 1;
+                } else if(elementsInDrag.sizeOne.includes(evt.target.dataset.id)){
+                    this.size = 3;
+                } else {
+                    this.size = 2;
                 }
                 evt.dataTransfer.setData('id', evt.target.dataset.id);
                 // evt.dataTransfer.setData('x', x.toString());
@@ -31,9 +35,16 @@ export class DragObj {
                     if(this.size === 1){
                        it.classList.add('plan__cell_success');
                     }
-                    else if(this.xCord > 66){
+                    else if(this.size === 2 && this.xCord > 66){
                         this.planCell.forEach((item)=> {
                             if(Number(item.dataset.x) === it.dataset.x -1 && Number(item.dataset.y === it.dataset.y)){
+                                item.classList.add('plan__cell_success');
+                                it.classList.add('plan__cell_success');
+                            }
+                        })
+                    } else if(this.size === 2 && this.xCord <= 66){
+                        this.planCell.forEach((item)=> {
+                            if(Number(item.dataset.x) === Number(it.dataset.x) + 1 && Number(item.dataset.y === it.dataset.y)){
                                 item.classList.add('plan__cell_success');
                                 it.classList.add('plan__cell_success');
                             }
@@ -49,8 +60,15 @@ export class DragObj {
                 if(this.size === 1){
                     it.classList.remove('plan__cell_success');
                 }
-                else if(this.xCord > 66){
+                else if(this.size === 2 && this.xCord > 66){
                     // it.classList.remove('plan__cell_success');
+                    this.planCell.forEach((item)=> {
+                        if(Number(item.dataset.y === it.dataset.y)){
+                            item.classList.remove('plan__cell_success');
+                        }
+                    })
+                } else if(this.size === 2 && this.xCord <= 66){
+                    it.classList.remove('plan__cell_success');
                     this.planCell.forEach((item)=> {
                         if(Number(item.dataset.y === it.dataset.y)){
                             item.classList.remove('plan__cell_success');
