@@ -86,6 +86,9 @@ export class DragObj {
             const elementDrop = Array.from(this.elementsDrag).filter((item)=> item.children[0].dataset.id === evt.dataTransfer.getData('id'));
             evt.stopPropagation();
             if(evt.target.classList.contains('plan__cell_success')) {
+                if(this.size === 2 && this.xCord > 66){
+                   evt.target.previousElementSibling.classList.remove('plan__cell_success')
+                }
                 planContainer.createElements(elementDrop[0], evt.target, this.xCord, this.size);
                 evt.target.classList.remove('plan__cell_success');
             }
