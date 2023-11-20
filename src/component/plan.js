@@ -76,6 +76,11 @@ export class Plan {
     }
     init(){
         this.updatePlan();
+        this.planCell.forEach((cell)=>{
+            if(cell.classList.contains('plan__cell_error')){
+                this.planCellBusy.push([cell.dataset.x, cell.dataset.y])
+            }
+        })
         this.btnReset.addEventListener('click', () => this.resetRoom());
     }
 }
