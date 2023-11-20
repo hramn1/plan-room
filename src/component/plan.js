@@ -28,6 +28,10 @@ export class Plan {
             elementClone.children[0].children[0].innerHTML = this.button;
             elementClone.style.left = (dropElement.dataset.x - 2) * this.size + 'px';
             elementClone.style.top = (dropElement.dataset.y - 1) * this.size + 'px';
+        } else if(size === 2 && xCord <= 66) {
+            elementClone.children[0].children[0].innerHTML = this.button;
+            elementClone.style.left = (dropElement.dataset.x - 1) * this.size + 'px';
+            elementClone.style.top = (dropElement.dataset.y - 1) * this.size + 'px';
         }
 
         this.planGrid.append(elementClone);

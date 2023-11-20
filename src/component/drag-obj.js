@@ -88,6 +88,8 @@ export class DragObj {
             if(evt.target.classList.contains('plan__cell_success')) {
                 if(this.size === 2 && this.xCord > 66){
                    evt.target.previousElementSibling.classList.remove('plan__cell_success')
+                } else if(this.size === 2 && this.xCord <= 66){
+                    evt.target.nextElementSibling.classList.remove('plan__cell_success')
                 }
                 planContainer.createElements(elementDrop[0], evt.target, this.xCord, this.size);
                 evt.target.classList.remove('plan__cell_success');
