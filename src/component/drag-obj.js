@@ -17,14 +17,12 @@ export class DragObj {
                 this.yCord = evt.clientY - rect.top;  //y position within the element.
                 if(elementsInDrag.sizeOne.includes(evt.target.dataset.id)){
                     this.size = 1;
-                } else if(elementsInDrag.sizeOne.includes(evt.target.dataset.id)){
+                } else if(elementsInDrag.sizeThree.includes(evt.target.dataset.id)){
                     this.size = 3;
                 } else {
                     this.size = 2;
                 }
                 evt.dataTransfer.setData('id', evt.target.dataset.id);
-                // evt.dataTransfer.setData('x', x.toString());
-                // evt.dataTransfer.setData('y', y.toString());
             })
         })
     }
@@ -49,9 +47,39 @@ export class DragObj {
                                 it.classList.add('plan__cell_success');
                             }
                         })
-                    }
+                    } else if(this.size === 3 && this.xCord <= 66){
+                        this.planCell.forEach((item)=> {
+                            if(Number(item.dataset.x) === Number(it.dataset.x) + 1 && Number(item.dataset.y === it.dataset.y)){
+                                item.classList.add('plan__cell_success');
+                                it.classList.add('plan__cell_success');
+                            }
+                            if(Number(item.dataset.x) === Number(it.dataset.x) + 2 && Number(item.dataset.y === it.dataset.y)){
+                                item.classList.add('plan__cell_success');
+                            }
+                        })
+                    } else if(this.size === 3 && 66 < this.xCord && this.xCord <= 132){
+                        this.planCell.forEach((item)=> {
+                            if(Number(item.dataset.x) === Number(it.dataset.x) - 1  && Number(item.dataset.y === it.dataset.y)){
+                                item.classList.add('plan__cell_success');
+                                it.classList.add('plan__cell_success');
+                            }
+                            if(Number(item.dataset.x) === Number(it.dataset.x) + 1 && Number(item.dataset.y === it.dataset.y)){
+                                item.classList.add('plan__cell_success');
+                            }
+                        })
+                    }  else if(this.size === 3 && this.xCord > 132){
+                        this.planCell.forEach((item)=> {
+                            if(Number(item.dataset.x) === Number(it.dataset.x) - 2  && Number(item.dataset.y === it.dataset.y)){
+                                item.classList.add('plan__cell_success');
+                                it.classList.add('plan__cell_success');
+                            }
+                            if(Number(item.dataset.x) === Number(it.dataset.x) -1  && Number(item.dataset.y === it.dataset.y)){
+                                item.classList.add('plan__cell_success');
+                            }
+                        })
                 }
-            });
+    }
+    })
         })
     }
     dragleave(){
@@ -74,6 +102,26 @@ export class DragObj {
                             item.classList.remove('plan__cell_success');
                         }
                     })
+                } else if(this.size === 3 && this.xCord <= 66){
+                    it.classList.remove('plan__cell_success');
+                    this.planCell.forEach((item)=> {
+                        if(Number(item.dataset.y === it.dataset.y)){
+                            item.classList.remove('plan__cell_success');
+                        }
+                    })
+                }  else if(this.size === 3 && 66 < this.xCord && this.xCord <= 132){
+                    it.classList.remove('plan__cell_success');
+                    this.planCell.forEach((item)=> {
+                        if(Number(item.dataset.y === it.dataset.y)){
+                            item.classList.remove('plan__cell_success');
+                        }
+                    })
+                }  else if(this.size === 3 && this.xCord > 132){
+                    this.planCell.forEach((item)=> {
+                        if(Number(item.dataset.y === it.dataset.y)){
+                            item.classList.remove('plan__cell_success');
+                        }
+                    })
                 }
             });
         })
@@ -86,11 +134,21 @@ export class DragObj {
             const elementDrop = Array.from(this.elementsDrag).filter((item)=> item.children[0].dataset.id === evt.dataTransfer.getData('id'));
             evt.stopPropagation();
             if(evt.target.classList.contains('plan__cell_success')) {
-                if(this.size === 2 && this.xCord > 66){
+                if(this.size === 2 && this.xCord > 66) {
                    evt.target.previousElementSibling.classList.remove('plan__cell_success')
-                } else if(this.size === 2 && this.xCord <= 66){
+                } else if(this.size === 2 && this.xCord <= 66) {
                     evt.target.nextElementSibling.classList.remove('plan__cell_success')
+                } else if(this.size === 3 && this.xCord <= 66){
+                    evt.target.nextElementSibling.classList.remove('plan__cell_success')
+                    evt.target.nextElementSibling.nextElementSibling.classList.remove('plan__cell_success')
+                } else if(this.size === 3 && this.xCord > 66 && this.xCord <= 132){
+                    evt.target.nextElementSibling.classList.remove('plan__cell_success')
+                    evt.target.previousElementSibling.classList.remove('plan__cell_success')
+                } else if(this.size === 3 && this.xCord > 132){
+                    evt.target.previousElementSibling.classList.remove('plan__cell_success')
+                    evt.target.previousElementSibling.previousElementSibling.classList.remove('plan__cell_success')
                 }
+
                 planContainer.createElements(elementDrop[0], evt.target, this.xCord, this.size);
                 evt.target.classList.remove('plan__cell_success');
             }
