@@ -1,3 +1,5 @@
+import {elementsInDrag} from "./data";
+
 const getRandomInteger = (a, b) => {
     const lower = Math.ceil(Math.min(a, b));
     const upper = Math.floor(Math.max(a, b));
@@ -20,3 +22,14 @@ const generateRandomIndex = (a, b) => {
         return currentIndex;
     };
 };
+export const setSizeObj = (elem)=>{
+    let size = 2;
+    if(elementsInDrag.sizeOne.includes(elem.dataset.id)) {
+        size = 1;
+    } else if(elementsInDrag.sizeThree.includes(elem.dataset.id)){
+       size = 3;
+    } else {
+        size = 2;
+    }
+    return size
+}
