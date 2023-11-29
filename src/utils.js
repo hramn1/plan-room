@@ -1,35 +1,80 @@
-import {elementsInDrag} from "./data";
+import {buttonOneSize, buttonSize, elementsInDrag} from "./data";
 
 const getRandomInteger = (a, b) => {
-    const lower = Math.ceil(Math.min(a, b));
-    const upper = Math.floor(Math.max(a, b));
-    const result = Math.random() * (upper - lower + 1) + lower;
-    return Math.floor(result);
+  const lower = Math.ceil(Math.min(a, b));
+  const upper = Math.floor(Math.max(a, b));
+  const result = Math.random() * (upper - lower + 1) + lower;
+  return Math.floor(result);
 };
 
 const generateRandomIndex = (a, b) => {
-    const indexNumbers = [];
-    return () => {
-        console.log(indexNumbers)
-        let currentIndex = getRandomInteger(a, b);
-        if (indexNumbers.length === Math.floor(Math.max(a, b))) {
-            return '';
-        }
-        while (indexNumbers.includes(currentIndex)) {
-            currentIndex = getRandomInteger(a, b);
-        }
-        indexNumbers.push(currentIndex);
-        return currentIndex;
-    };
-};
-export const setSizeObj = (elem)=>{
-    let size = 2;
-    if(elementsInDrag.sizeOne.includes(elem.dataset.id)) {
-        size = 1;
-    } else if(elementsInDrag.sizeThree.includes(elem.dataset.id)){
-       size = 3;
-    } else {
-        size = 2;
+  const indexNumbers = [];
+  return () => {
+    let currentIndex = getRandomInteger(a, b);
+    if (indexNumbers.length === Math.floor(Math.max(a, b))) {
+      return '';
     }
-    return size
+    while (indexNumbers.includes(currentIndex)) {
+      currentIndex = getRandomInteger(a, b);
+    }
+    indexNumbers.push(currentIndex);
+    return currentIndex;
+  };
+};
+export const setSizeObj = (elem) => {
+  let size;
+  if (elementsInDrag.sizeOne.includes(elem.dataset.id)) {
+    size = 1;
+  } else if (elementsInDrag.sizeThree.includes(elem.dataset.id)) {
+    size = 3;
+  } else {
+    size = 2;
+  }
+  return size
+}
+export const addCellSuccess = (planCells, elem, xCord) => {
+  planCells.forEach((item) => {
+    if (Number(item.dataset.x) === elem.dataset.x - (xCord <= 66 ? -1 : 1) && Number(item.dataset.y === elem.dataset.y)) {
+      item.classList.add('plan__cell_success');
+      elem.classList.add('plan__cell_success');
+    }
+  })
+}
+export const addCellSuccessThree = (planCells, elem, xCord) => {
+  let shiftX, shiftXSecond;
+  if (xCord <= 66) {
+    shiftX = 1;
+    shiftXSecond = 2;
+  } else if (xCord > 132) {
+    shiftX = -2;
+    shiftXSecond = -1;
+  } else {
+    shiftX = -1;
+    shiftXSecond = 1;
+  }
+  planCells.forEach((item) => {
+    if (Number(item.dataset.x) === Number(elem.dataset.x) + shiftX && Number(item.dataset.y === elem.dataset.y)) {
+      item.classList.add('plan__cell_success');
+      elem.classList.add('plan__cell_success');
+    }
+    if (Number(item.dataset.x) === Number(elem.dataset.x) + shiftXSecond && Number(item.dataset.y === elem.dataset.y)) {
+      item.classList.add('plan__cell_success');
+    }
+  })
+}
+export const createElementOnPlan = (elementClone, dropElement, xCord, size, sizeElement) =>{
+  let shiftX, shiftXSecond;
+  if(xCord <= 66){
+    shiftX = 1;
+    shiftXSecond = 1;
+  } else if(xCord > 132){
+    shiftX = 3;
+    shiftXSecond = 1;
+  } else {
+    shiftX = 2;
+    shiftXSecond = 1;
+  }
+  elementClone.children[0].children[0].innerHTML = (sizeElement === 1) ? buttonOneSize: buttonSize;
+  elementClone.style.left = (dropElement.dataset.x - shiftX) * size + 'px';
+  elementClone.style.top = (dropElement.dataset.y - shiftXSecond) * size + 'px';
 }

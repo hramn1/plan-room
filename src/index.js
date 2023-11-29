@@ -6,4 +6,4 @@ const planCell = planGrid.querySelectorAll('.plan__cell');
 
 const dragEl = new DragObj(draggableObjElements, planCell, planGrid);
 
-dragEl.init()
+dragEl.init();
