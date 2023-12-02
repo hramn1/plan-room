@@ -1,26 +1,26 @@
 import {buttonOneSize, buttonSize, elementsInDrag} from './data';
 
-// const getRandomInteger = (a, b) => {
-//   const lower = Math.ceil(Math.min(a, b));
-//   const upper = Math.floor(Math.max(a, b));
-//   const result = Math.random() * (upper - lower + 1) + lower;
-//   return Math.floor(result);
-// };
-//
-// const generateRandomIndex = (a, b) => {
-//   const indexNumbers = [];
-//   return () => {
-//     let currentIndex = getRandomInteger(a, b);
-//     if (indexNumbers.length === Math.floor(Math.max(a, b))) {
-//       return '';
-//     }
-//     while (indexNumbers.includes(currentIndex)) {
-//       currentIndex = getRandomInteger(a, b);
-//     }
-//     indexNumbers.push(currentIndex);
-//     return currentIndex;
-//   };
-// };
+const getRandomInteger = (a, b) => {
+  const lower = Math.ceil(Math.min(a, b));
+  const upper = Math.floor(Math.max(a, b));
+  const result = Math.random() * (upper - lower + 1) + lower;
+  return Math.floor(result);
+};
+
+export const generateRandomIndex = (a, b) => {
+  const indexNumbers = [];
+  return () => {
+    let currentIndex = getRandomInteger(a, b);
+    if (indexNumbers.length === Math.floor(Math.max(a, b))) {
+      return '';
+    }
+    while (indexNumbers.includes(currentIndex)) {
+      currentIndex = getRandomInteger(a, b);
+    }
+    indexNumbers.push(currentIndex);
+    return currentIndex;
+  };
+};
 export const setSizeObj = (elem) => {
   let size;
   if(elementsInDrag.sizeOne.includes(elem.dataset.id)) {
@@ -77,4 +77,5 @@ export const createElementOnPlan = (elementClone, dropElement, xCord, size, size
   elementClone.children[0].children[0].innerHTML = (sizeElement === 1) ? buttonOneSize : buttonSize;
   elementClone.style.left = `${(dropElement.dataset.x - shiftX) * size }px`;
   elementClone.style.top = `${(dropElement.dataset.y - shiftXSecond) * size }px`;
+  elementClone.dataset.id = generateRandomIndex(1,100)();
 };

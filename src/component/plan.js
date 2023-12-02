@@ -15,9 +15,10 @@ export class Plan {
     elementClone.children[0].removeAttribute('draggable');
     if (size === 1) {
       createElementOnPlan(elementClone, dropElement, xCord, this.size, size);
+      this.planCellBusy.push([dropElement.dataset.x, dropElement.dataset.y]);
     } else {
       createElementOnPlan(elementClone, dropElement, xCord, this.size, size);
-      elementClone.querySelector('.figure__button-rotate').addEventListener('click', this.checkPossibilityRotate);
+      elementClone.querySelector('.figure__button-rotate').addEventListener('click',(evt) => this.checkPossibilityRotate(evt, dropElement, size, elementClone));
     }
     this.planGrid.append(elementClone);
     this.updatePlan();
@@ -38,7 +39,12 @@ export class Plan {
     });
   }
 
-  checkPossibilityRotate(evt) {
+  checkPossibilityRotate(evt, cell, size, element) {
+    if (Number(cell.dataset.y) + Number(size) > 7){
+      element.classList.add('shake-on-hover');
+      setTimeout(()=>      element.classList.remove('shake-on-hover'), 400)
+      return;
+    }
     const elementTarget = evt.currentTarget.parentNode.parentNode.parentNode;
     if (!elementTarget.classList.contains('objects__item-rotated')) {
       elementTarget.classList.add('objects__item-rotated');
