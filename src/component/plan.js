@@ -1,4 +1,4 @@
-import {createElementOnPlan} from '../utils';
+import {createElementOnPlan, isEqual} from '../utils';
 
 export class Plan {
   constructor(planGrid, planCell) {
@@ -15,7 +15,7 @@ export class Plan {
     elementClone.children[0].removeAttribute('draggable');
     if (size === 1) {
       createElementOnPlan(elementClone, dropElement, xCord, this.size, size);
-      this.planCellBusy.push([dropElement.dataset.x, dropElement.dataset.y]);
+      this.planCellBusy.push([Number(dropElement.dataset.x), Number(dropElement.dataset.y)]);
     } else {
       createElementOnPlan(elementClone, dropElement, xCord, this.size, size);
       elementClone.querySelector('.figure__button-rotate').addEventListener('click',(evt) => this.checkPossibilityRotate(evt, dropElement, size, elementClone));
@@ -40,6 +40,15 @@ export class Plan {
   }
 
   checkPossibilityRotate(evt, cell, size, element) {
+    if(size === 2){
+      let arrP = [(parseInt(element.style.left) / 66) + 1, (parseInt(element.style.top) / 66) + size];
+      if(this.planCellBusy.some((item)=> isEqual(item, arrP))){
+        element.classList.add('shake-on-hover');
+        setTimeout(()=>      element.classList.remove('shake-on-hover'), 400)
+        return;
+      }
+
+    }
     if (Number(cell.dataset.y) + Number(size) > 7){
       element.classList.add('shake-on-hover');
       setTimeout(()=>      element.classList.remove('shake-on-hover'), 400)
