@@ -19,6 +19,29 @@ export class Plan {
     } else {
       createElementOnPlan(elementClone, dropElement, xCord, this.size, size);
       elementClone.querySelector('.figure__button-rotate').addEventListener('click',(evt) => this.checkPossibilityRotate(evt, dropElement, size, elementClone));
+      if(size === 2 && xCord <= 66){
+        this.planCellBusy.push([Number(dropElement.dataset.x), Number(dropElement.dataset.y)]);
+        this.planCellBusy.push([Number(dropElement.dataset.x + 1) , Number(dropElement.dataset.y)]);
+      }
+      if(size === 2 && xCord > 66){
+        this.planCellBusy.push([Number(dropElement.dataset.x), Number(dropElement.dataset.y)]);
+        this.planCellBusy.push([Number(dropElement.dataset.x - 1) , Number(dropElement.dataset.y)]);
+      }
+      if(size === 3 && xCord <= 66){
+        this.planCellBusy.push([Number(dropElement.dataset.x), Number(dropElement.dataset.y)]);
+        this.planCellBusy.push([Number(dropElement.dataset.x + 1) , Number(dropElement.dataset.y)]);
+        this.planCellBusy.push([Number(dropElement.dataset.x + 2) , Number(dropElement.dataset.y)]);
+      }
+      if(size === 3 && xCord > 66 && xCord <= 132){
+        this.planCellBusy.push([Number(dropElement.dataset.x), Number(dropElement.dataset.y)]);
+        this.planCellBusy.push([Number(dropElement.dataset.x + 1) , Number(dropElement.dataset.y)]);
+        this.planCellBusy.push([Number(dropElement.dataset.x - 1) , Number(dropElement.dataset.y)]);
+      }
+      if(size === 3 && xCord > 132){
+        this.planCellBusy.push([Number(dropElement.dataset.x), Number(dropElement.dataset.y)]);
+        this.planCellBusy.push([Number(dropElement.dataset.x - 1) , Number(dropElement.dataset.y)]);
+        this.planCellBusy.push([Number(dropElement.dataset.x - 2) , Number(dropElement.dataset.y)]);
+      }
     }
     this.planGrid.append(elementClone);
     this.updatePlan();
@@ -44,7 +67,7 @@ export class Plan {
       let arrP = [(parseInt(element.style.left) / 66) + 1, (parseInt(element.style.top) / 66) + size];
       if(this.planCellBusy.some((item)=> isEqual(item, arrP))){
         element.classList.add('shake-on-hover');
-        setTimeout(()=>      element.classList.remove('shake-on-hover'), 400)
+        setTimeout(() => element.classList.remove('shake-on-hover'), 400)
         return;
       }
 
