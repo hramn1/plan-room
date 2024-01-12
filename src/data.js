@@ -4,7 +4,7 @@ export const elementsInDrag = {
 };
 export const buttonSize = `<svg class="figure__button figure__button-rotate" fill="currentColor" height="1em" width="1em">
                                     <use xlink:href="#rotate-icon"></use>
-                                    </svg>
+                                  </svg>
                                  <svg class="figure__button figure__button-delete" fill="currentColor" height="1em" width="1em">
                                   <use xlink:href="#delete-icon"></use>
                                  </svg>`;
