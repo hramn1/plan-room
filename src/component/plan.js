@@ -85,25 +85,29 @@ export class Plan {
   }
 
   checkPossibilityRotate(evt, cell, size, element) {
-    console.log(this.planCellBusy)
-    let rotateElement = this.planCellBusy.filter((cell)=> cell.id == element.dataset.id);
-    let busyCells = this.planCellBusy.map((item)=>item.cell)
-    for (let i = 0; i < busyCells.length; i++){
-      if(Array.isArray(busyCells[i][0])){
-
+    let rotateElement = this.planCellBusy.filter((cells)=> cells.id == element.dataset.id);
+    const busyCells = [];
+      this.planCellBusy.forEach((item) => {
+      if(Array.isArray(item.cell[0])) {
+        for(let i = 0; i < item.cell.length; i++) {
+          busyCells.push(item.cell[i]);
+        }
+      } else {
+        busyCells.push(item.cell);
       }
-    }
-    let arrP = [(parseInt(element.style.left) / 66) + 1, (parseInt(element.style.top) / 66) + size];
+    });
+    let arrP = [(parseInt(element.style.left, 10) / 66) + 1, (parseInt(element.style.top, 10) / 66) + size];
       for (let i = 0; i < this.planCellBusy.length; i++){
         if(this.planCellBusy[i].cell.some((item)=> isEqual(item, arrP))) {
           element.classList.add('shake-on-hover');
-          setTimeout(() => element.classList.remove('shake-on-hover'), 400)
+          setTimeout(() => element.classList.remove('shake-on-hover'), 400);
+
           return;
         }
     }
     if (Number(cell.dataset.y) + Number(size) > 7){
       element.classList.add('shake-on-hover');
-      setTimeout(() => element.classList.remove('shake-on-hover'), 400)
+      setTimeout(() => element.classList.remove('shake-on-hover'), 400);
       return;
     }
     const elementTarget = evt.currentTarget.parentNode.parentNode.parentNode;
@@ -121,7 +125,7 @@ export class Plan {
 
     btnDeleteElement.forEach((item) => {
       item.addEventListener('click', (evt) => {
-        let deleteElement = evt.currentTarget.parentNode.parentNode.parentNode;
+        const deleteElement = evt.currentTarget.parentNode.parentNode.parentNode;
         this.planCellBusy = this.planCellBusy.filter((elements)=> elements.id != deleteElement.dataset.id)
         deleteElement.remove();
       });

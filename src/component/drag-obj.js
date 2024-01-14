@@ -22,24 +22,24 @@ export class DragObj {
   }
 
   dragenter() {
-      this.planGrid.addEventListener('dragover', (evt) => {
-        if (!evt.target.classList.contains('plan__cell_error')) {
-          if (this.size === 1) {
-            if(!evt.target.classList.contains('plan__cell')) {
-              // const elementDrop = Array.from(this.planCell).filter((item) => Number(item.dataset.x) === Math.floor(evt.clientX / 66 ) && Number(item.dataset.y) === Math.floor(evt.clientY / 66 - 1));
-              // evt.target.closest('.plan__cell').classList.add('plan__cell_error');
-              // console.log(elementDrop[0])
-              // elementDrop[0].classList.add('plan__cell_error');
-            } else {
-              evt.target.classList.add('plan__cell_success');
-            }
-          } else if (this.size === 2) {
-            addCellSuccess(this.planCell, evt.target, this.xCord);
-          } else if (this.size === 3) {
-            addCellSuccessThree(this.planCell, evt.target, this.xCord);
+    this.planGrid.addEventListener('dragover', (evt) => {
+      if (!evt.target.classList.contains('plan__cell_error')) {
+        if (this.size === 1) {
+          if(!evt.target.classList.contains('plan__cell')) {
+            // const elementDrop = Array.from(this.planCell).filter((item) => Number(item.dataset.x) === Math.floor(evt.clientX / 66 ) && Number(item.dataset.y) === Math.floor(evt.clientY / 66 - 1));
+            // evt.target.closest('.plan__cell').classList.add('plan__cell_error');
+            // console.log(elementDrop[0])
+            // elementDrop[0].classList.add('plan__cell_error');
+          } else {
+            evt.target.classList.add('plan__cell_success');
           }
+        } else if (this.size === 2) {
+          addCellSuccess(this.planCell, evt.target, this.xCord);
+        } else if (this.size === 3) {
+          addCellSuccessThree(this.planCell, evt.target, this.xCord);
         }
-      });
+      }
+    });
   }
 
   dragleave() {
