@@ -96,27 +96,31 @@ export class Plan {
         busyCells.push(item.cell);
       }
     });
-    let arrP = [(parseInt(element.style.left, 10) / 66) + 1, (parseInt(element.style.top, 10) / 66) + size];
-      for (let i = 0; i < this.planCellBusy.length; i++){
-        if(this.planCellBusy[i].cell.some((item)=> isEqual(item, arrP))) {
+    if(size === 2 && !element.classList.contains('objects__item-rotated')) {
+      let arrP = [(parseInt(element.style.left, 10) / 66) + 1, (parseInt(element.style.top, 10) / 66) + size];
+
+      for (let i = 0; i < this.planCellBusy.length; i++) {
+        if (busyCells.some((item) => isEqual(item, arrP))) {
           element.classList.add('shake-on-hover');
           setTimeout(() => element.classList.remove('shake-on-hover'), 400);
-
           return;
         }
+      }
     }
     if (Number(cell.dataset.y) + Number(size) > 7){
       element.classList.add('shake-on-hover');
       setTimeout(() => element.classList.remove('shake-on-hover'), 400);
       return;
     }
-    const elementTarget = evt.currentTarget.parentNode.parentNode.parentNode;
 
-
-    if (!elementTarget.classList.contains('objects__item-rotated')) {
-      elementTarget.classList.add('objects__item-rotated');
+    if (!element.classList.contains('objects__item-rotated')) {
+      element.classList.add('objects__item-rotated');
+      this.planCellBusy = this.planCellBusy.filter((item)=>{
+        return item.id != element.dataset.id
+      })
+      console.log(this.planCellBusy)
     } else {
-      elementTarget.classList.remove('objects__item-rotated');
+      element.classList.remove('objects__item-rotated');
     }
   }
 
