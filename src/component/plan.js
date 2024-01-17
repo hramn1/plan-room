@@ -13,7 +13,6 @@ export class Plan {
     const elementClone = element.cloneNode(true);
     elementClone.removeChild(elementClone.querySelector('.object__name'));
     elementClone.children[0].removeAttribute('draggable');
-
     if (size === 1) {
       createElementOnPlan(elementClone, dropElement, xCord, this.size, size);
       this.planCellBusy.push({'id':Number(elementClone.dataset.id), 'cell': [Number(dropElement.dataset.x), Number(dropElement.dataset.y)]});
@@ -85,9 +84,10 @@ export class Plan {
   }
 
   checkPossibilityRotate(evt, cell, size, element) {
-    let rotateElement = this.planCellBusy.filter((cells)=> cells.id == element.dataset.id);
+    const rotateElement = this.planCellBusy.filter((cells)=> cells.id == element.dataset.id)[0];
+    rotateElement.cell.sort((a,b) => a[0] - b[0]);
     const busyCells = [];
-      this.planCellBusy.forEach((item) => {
+    this.planCellBusy.forEach((item) => {
       if(Array.isArray(item.cell[0])) {
         for(let i = 0; i < item.cell.length; i++) {
           busyCells.push(item.cell[i]);
@@ -97,8 +97,17 @@ export class Plan {
       }
     });
     if(size === 2 && !element.classList.contains('objects__item-rotated')) {
-      let arrP = [(parseInt(element.style.left, 10) / 66) + 1, (parseInt(element.style.top, 10) / 66) + size];
+      const arrP = [(parseInt(element.style.left, 10) / 66) + 1, (parseInt(element.style.top, 10) / 66) + size];
 
+      for (let i = 0; i < this.planCellBusy.length; i++) {
+        if (busyCells.some((item) => isEqual(item, arrP))) {
+          element.classList.add('shake-on-hover');
+          setTimeout(() => element.classList.remove('shake-on-hover'), 400);
+          return;
+        }
+      }
+    } else if(size === 2 && element.classList.contains('objects__item-rotated')) {
+      const arrP = [(parseInt(element.style.left, 10) / 66) + size, (parseInt(element.style.top, 10) / 66) + 1 ];
       for (let i = 0; i < this.planCellBusy.length; i++) {
         if (busyCells.some((item) => isEqual(item, arrP))) {
           element.classList.add('shake-on-hover');
@@ -115,10 +124,11 @@ export class Plan {
 
     if (!element.classList.contains('objects__item-rotated')) {
       element.classList.add('objects__item-rotated');
-      this.planCellBusy = this.planCellBusy.filter((item)=>{
-        return item.id != element.dataset.id
-      })
-      console.log(this.planCellBusy)
+      this.planCellBusy = this.planCellBusy.filter((item)=> {
+        return item.id != element.dataset.id;
+      });
+      rotateElement.cell[1] = [rotateElement.cell[1][0] - 1, rotateElement.cell[1][1] + 1];
+      this.planCellBusy.push(rotateElement);
     } else {
       element.classList.remove('objects__item-rotated');
     }
