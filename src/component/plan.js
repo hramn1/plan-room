@@ -19,47 +19,22 @@ export class Plan {
     } else {
       createElementOnPlan(elementClone, dropElement, xCord, this.size, size, this.planCell);
       elementClone.querySelector('.figure__button-rotate').addEventListener('click',(evt) => this.checkPossibilityRotate(evt, dropElement, size, elementClone));
-      if(size === 2 && xCord <= 66){
+      if(size === 2){
         this.planCellBusy.push({
           'id':Number(elementClone.dataset.id),
           'cell': [
             [Number(dropElement.dataset.x), Number(dropElement.dataset.y)],
-            [Number(dropElement.dataset.x) + 1, Number(dropElement.dataset.y)]
+            [Number(dropElement.dataset.x) + (xCord <= 66 ? 1 : -1), Number(dropElement.dataset.y)]
           ]});
       }
-      if(size === 2 && xCord > 66){
+      if(size === 3){
         this.planCellBusy.push({
           'id':Number(elementClone.dataset.id),
           'cell': [
             [Number(dropElement.dataset.x), Number(dropElement.dataset.y)],
-            [Number(dropElement.dataset.x) - 1, Number(dropElement.dataset.y)]
-          ]});
-      }
-      if(size === 3 && xCord <= 66){
-        this.planCellBusy.push({
-          'id':Number(elementClone.dataset.id),
-          'cell': [
-            [Number(dropElement.dataset.x), Number(dropElement.dataset.y)],
-            [Number(dropElement.dataset.x) + 1, Number(dropElement.dataset.y)],
-            [Number(dropElement.dataset.x) + 2, Number(dropElement.dataset.y)]
-          ]});
-      }
-      if(size === 3 && xCord > 66 && xCord <= 132){
-        this.planCellBusy.push({
-          'id':Number(elementClone.dataset.id),
-          'cell': [
-            [Number(dropElement.dataset.x), Number(dropElement.dataset.y)],
-            [Number(dropElement.dataset.x) + 1, Number(dropElement.dataset.y)],
-            [Number(dropElement.dataset.x) - 1, Number(dropElement.dataset.y)]
-          ]});
-      }
-      if(size === 3 && xCord > 132){
-        this.planCellBusy.push({
-          'id':Number(elementClone.dataset.id),
-          'cell': [
-            [Number(dropElement.dataset.x), Number(dropElement.dataset.y)],
-            [Number(dropElement.dataset.x) - 1, Number(dropElement.dataset.y)],
-            [Number(dropElement.dataset.x) - 2, Number(dropElement.dataset.y)]
+            [Number(dropElement.dataset.x) + (xCord <= 132 ? 1 : -1), Number(dropElement.dataset.y)],
+            // eslint-disable-next-line no-nested-ternary
+            [Number(dropElement.dataset.x) + (xCord <= 66 ? 2 : xCord <= 132 ? -1 : -2), Number(dropElement.dataset.y)]
           ]});
       }
     }
@@ -84,6 +59,7 @@ export class Plan {
   }
 
   checkPossibilityRotate(evt, cell, size, element) {
+    // eslint-disable-next-line
     const rotateElement = this.planCellBusy.filter((cells)=> cells.id == element.dataset.id)[0];
     rotateElement.cell.sort((a,b) => a[0] - b[0]);
     const busyCells = [];
@@ -96,9 +72,18 @@ export class Plan {
         busyCells.push(item.cell);
       }
     });
-    if(size === 2 && !element.classList.contains('objects__item-rotated')) {
+    if(!element.classList.contains('objects__item-rotated')) {
       const arrP = [(parseInt(element.style.left, 10) / 66) + 1, (parseInt(element.style.top, 10) / 66) + size];
-
+      if(size === 3) {
+        const arrSecondP = [(parseInt(element.style.left, 10) / 66) + 1, (parseInt(element.style.top, 10) / 66) + size - 1];
+        for (let i = 0; i < this.planCellBusy.length; i++) {
+          if (busyCells.some((item) => isEqual(item, arrSecondP))) {
+            element.classList.add('shake-on-hover');
+            setTimeout(() => element.classList.remove('shake-on-hover'), 400);
+            return;
+          }
+        }
+      }
       for (let i = 0; i < this.planCellBusy.length; i++) {
         if (busyCells.some((item) => isEqual(item, arrP))) {
           element.classList.add('shake-on-hover');
@@ -106,7 +91,7 @@ export class Plan {
           return;
         }
       }
-    } else if(size === 2 && element.classList.contains('objects__item-rotated')) {
+    } else if(element.classList.contains('objects__item-rotated')) {
       const arrP = [(parseInt(element.style.left, 10) / 66) + size, (parseInt(element.style.top, 10) / 66) + 1 ];
       for (let i = 0; i < this.planCellBusy.length; i++) {
         if (busyCells.some((item) => isEqual(item, arrP))) {
@@ -124,12 +109,17 @@ export class Plan {
 
     if (!element.classList.contains('objects__item-rotated')) {
       element.classList.add('objects__item-rotated');
-      this.planCellBusy = this.planCellBusy.filter((item)=> {
-        return item.id != element.dataset.id;
-      });
-      rotateElement.cell[1] = [rotateElement.cell[1][0] - 1, rotateElement.cell[1][1] + 1];
+      // eslint-disable-next-line
+      this.planCellBusy = this.planCellBusy.filter((item)=> item.id != element.dataset.id);
+      if(size === 2) {
+        rotateElement.cell[1] = [rotateElement.cell[1][0] - 1, rotateElement.cell[1][1] + 1];
+      }
       this.planCellBusy.push(rotateElement);
     } else {
+      // eslint-disable-next-line
+      this.planCellBusy = this.planCellBusy.filter((item)=> item.id != element.dataset.id);
+      rotateElement.cell[1] = [rotateElement.cell[1][0] + 1, rotateElement.cell[1][1] - 1];
+      this.planCellBusy.push(rotateElement);
       element.classList.remove('objects__item-rotated');
     }
   }
@@ -140,7 +130,8 @@ export class Plan {
     btnDeleteElement.forEach((item) => {
       item.addEventListener('click', (evt) => {
         const deleteElement = evt.currentTarget.parentNode.parentNode.parentNode;
-        this.planCellBusy = this.planCellBusy.filter((elements)=> elements.id != deleteElement.dataset.id)
+        // eslint-disable-next-line
+        this.planCellBusy = this.planCellBusy.filter((elements)=> elements.id != deleteElement.dataset.id);
         deleteElement.remove();
       });
     });
@@ -148,6 +139,7 @@ export class Plan {
   }
 
   init() {
+    this.resetRoom();
     const btnRotateElement = document.querySelectorAll('.figure__button-rotate');
     btnRotateElement.forEach((item) => {
       item.addEventListener('click', (evt) => {
@@ -160,11 +152,6 @@ export class Plan {
       });
     });
     this.updatePlan();
-    this.planCell.forEach((cell) => {
-      if (cell.classList.contains('plan__cell_error')) {
-        this.planCellBusy.push({'id': 0, 'cell': [Number(cell.dataset.x), Number(cell.dataset.y)]});
-      }
-    });
     this.btnReset.addEventListener('click', () => this.resetRoom());
   }
 }
