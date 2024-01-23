@@ -47,6 +47,7 @@ export class DragObj {
       this.planGrid.addEventListener('dragleave', () => {
         if (this.size === 1) {
           it.classList.remove('plan__cell_success');
+          // it.classList.remove('plan__cell_error');
         } else {
           this.planCell.forEach((item) => {
             if (Number(item.dataset.y === it.dataset.y)) {

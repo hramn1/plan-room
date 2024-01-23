@@ -113,12 +113,22 @@ export class Plan {
       this.planCellBusy = this.planCellBusy.filter((item)=> item.id != element.dataset.id);
       if(size === 2) {
         rotateElement.cell[1] = [rotateElement.cell[1][0] - 1, rotateElement.cell[1][1] + 1];
+      } else {
+        rotateElement.cell[1] = [rotateElement.cell[1][0] - 1, rotateElement.cell[1][1] + 1] ;
+        rotateElement.cell[2] = [rotateElement.cell[2][0] - 2, rotateElement.cell[2][1] + 2] ;
+
       }
+      console.log(rotateElement)
       this.planCellBusy.push(rotateElement);
     } else {
       // eslint-disable-next-line
       this.planCellBusy = this.planCellBusy.filter((item)=> item.id != element.dataset.id);
-      rotateElement.cell[1] = [rotateElement.cell[1][0] + 1, rotateElement.cell[1][1] - 1];
+      if(size === 2) {
+        rotateElement.cell[1] = [rotateElement.cell[1][0] + 1, rotateElement.cell[1][1] - 1];
+      } else {
+        rotateElement.cell[1] = [rotateElement.cell[1][0] + 1, rotateElement.cell[1][1] - 1];
+        rotateElement.cell[2] = [rotateElement.cell[2][0] + 2, rotateElement.cell[2][1] - 2];
+      }
       this.planCellBusy.push(rotateElement);
       element.classList.remove('objects__item-rotated');
     }
