@@ -9,6 +9,7 @@ export class Plan {
     this.size = 66;
   }
 
+
   createElements(element, dropElement, xCord, size) {
     const elementClone = element.cloneNode(true);
     elementClone.removeChild(elementClone.querySelector('.object__name'));

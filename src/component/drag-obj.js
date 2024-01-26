@@ -23,13 +23,13 @@ export class DragObj {
 
   dragenter() {
     this.planGrid.addEventListener('dragover', (evt) => {
+      console.log(evt)
       if (!evt.target.classList.contains('plan__cell_error')) {
         if (this.size === 1) {
-          if(!evt.target.classList.contains('plan__cell')) {
-            // const elementDrop = Array.from(this.planCell).filter((item) => Number(item.dataset.x) === Math.floor(evt.clientX / 66 ) && Number(item.dataset.y) === Math.floor(evt.clientY / 66 - 1));
-            // evt.target.closest('.plan__cell').classList.add('plan__cell_error');
-            // console.log(elementDrop[0])
-            // elementDrop[0].classList.add('plan__cell_error');
+          if(!evt.target.classList.contains('plan__cell')){
+            const elementDrop = Array.from(this.planCell).filter((item) => Number(item.dataset.x) === Math.round(evt.clientX / 66  + 2) && Number(item.dataset.y) === Math.round(evt.clientY / 66 - 2));
+            // // evt.target.closest('.plan__cell').classList.add('plan__cell_error');
+            // // elementDrop[0].classList.add('plan__cell_error');
           } else {
             evt.target.classList.add('plan__cell_success');
           }
@@ -39,7 +39,7 @@ export class DragObj {
           addCellSuccessThree(this.planCell, evt.target, this.xCord);
         }
       }
-    });
+    }, true);
   }
 
   dragleave() {
