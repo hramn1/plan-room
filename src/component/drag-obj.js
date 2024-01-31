@@ -22,17 +22,14 @@ export class DragObj {
   }
 
   dragenter() {
+
     this.planGrid.addEventListener('dragover', (evt) => {
-      console.log(evt)
-      if (!evt.target.classList.contains('plan__cell_error')) {
+      this.planCell.forEach((it) => {
+        it.classList.add('plan__cell_hack')
+      })
+      if (evt.target.classList.contains('plan__cell')) {
         if (this.size === 1) {
-          if(!evt.target.classList.contains('plan__cell')){
-            const elementDrop = Array.from(this.planCell).filter((item) => Number(item.dataset.x) === Math.round(evt.clientX / 66  + 2) && Number(item.dataset.y) === Math.round(evt.clientY / 66 - 2));
-            // // evt.target.closest('.plan__cell').classList.add('plan__cell_error');
-            // // elementDrop[0].classList.add('plan__cell_error');
-          } else {
-            evt.target.classList.add('plan__cell_success');
-          }
+          evt.target.classList.add('plan__cell_success');
         } else if (this.size === 2) {
           addCellSuccess(this.planCell, evt.target, this.xCord);
         } else if (this.size === 3) {
@@ -64,6 +61,9 @@ export class DragObj {
       evt.preventDefault();
     });
     this.planGrid.addEventListener('drop', (evt) => {
+      this.planCell.forEach((it)=>{
+        it.classList.remove('plan__cell_hack')
+      })
       const elementDrop = Array.from(this.elementsDrag).filter((item) => item.children[0].dataset.id === evt.dataTransfer.getData('id'));
       evt.stopPropagation();
       if (evt.target.classList.contains('plan__cell_success')) {

@@ -7,8 +7,8 @@ export class Plan {
     this.planCellBusy = [];
     this.btnReset = document.querySelector('.scheduler__action-reset');
     this.size = 66;
+    this.busyCells = [];
   }
-
 
   createElements(element, dropElement, xCord, size) {
     const elementClone = element.cloneNode(true);
@@ -63,14 +63,14 @@ export class Plan {
     // eslint-disable-next-line
     const rotateElement = this.planCellBusy.filter((cells)=> cells.id == element.dataset.id)[0];
     rotateElement.cell.sort((a,b) => a[0] - b[0]);
-    const busyCells = [];
+    this.busyCells = [];
     this.planCellBusy.forEach((item) => {
       if(Array.isArray(item.cell[0])) {
         for(let i = 0; i < item.cell.length; i++) {
-          busyCells.push(item.cell[i]);
+          this.busyCells.push(item.cell[i]);
         }
       } else {
-        busyCells.push(item.cell);
+        this.busyCells.push(item.cell);
       }
     });
     if(!element.classList.contains('objects__item-rotated')) {
@@ -78,7 +78,7 @@ export class Plan {
       if(size === 3) {
         const arrSecondP = [(parseInt(element.style.left, 10) / 66) + 1, (parseInt(element.style.top, 10) / 66) + size - 1];
         for (let i = 0; i < this.planCellBusy.length; i++) {
-          if (busyCells.some((item) => isEqual(item, arrSecondP))) {
+          if (this.busyCells.some((item) => isEqual(item, arrSecondP))) {
             element.classList.add('shake-on-hover');
             setTimeout(() => element.classList.remove('shake-on-hover'), 400);
             return;
@@ -86,7 +86,7 @@ export class Plan {
         }
       }
       for (let i = 0; i < this.planCellBusy.length; i++) {
-        if (busyCells.some((item) => isEqual(item, arrP))) {
+        if (this.busyCells.some((item) => isEqual(item, arrP))) {
           element.classList.add('shake-on-hover');
           setTimeout(() => element.classList.remove('shake-on-hover'), 400);
           return;
@@ -95,7 +95,7 @@ export class Plan {
     } else if(element.classList.contains('objects__item-rotated')) {
       const arrP = [(parseInt(element.style.left, 10) / 66) + size, (parseInt(element.style.top, 10) / 66) + 1 ];
       for (let i = 0; i < this.planCellBusy.length; i++) {
-        if (busyCells.some((item) => isEqual(item, arrP))) {
+        if (this.busyCells.some((item) => isEqual(item, arrP))) {
           element.classList.add('shake-on-hover');
           setTimeout(() => element.classList.remove('shake-on-hover'), 400);
           return;
@@ -119,7 +119,6 @@ export class Plan {
         rotateElement.cell[2] = [rotateElement.cell[2][0] - 2, rotateElement.cell[2][1] + 2] ;
 
       }
-      console.log(rotateElement)
       this.planCellBusy.push(rotateElement);
     } else {
       // eslint-disable-next-line
