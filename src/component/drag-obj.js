@@ -1,5 +1,5 @@
 import {Plan} from './plan.js';
-import {addCellSuccess, addCellSuccessThree, setSizeObj} from '../utils.js';
+import {addCellSuccess, addCellSuccessThree, isEqual, setSizeObj} from '../utils.js';
 
 export class DragObj {
   constructor(draggableObjElements, planCell, planGrid) {
@@ -22,14 +22,22 @@ export class DragObj {
   }
 
   dragenter() {
-
     this.planGrid.addEventListener('dragover', (evt) => {
       this.planCell.forEach((it) => {
         it.classList.add('plan__cell_hack')
       })
+      const arrEvtTarget = [Number(evt.target.dataset.x), Number(evt.target.dataset.y)]
+
       if (evt.target.classList.contains('plan__cell')) {
         if (this.size === 1) {
-          evt.target.classList.add('plan__cell_success');
+          Plan.busyCells.forEach((it)=>{
+            console.log(isEqual(arrEvtTarget, it))
+            if(isEqual(arrEvtTarget, it)){
+              evt.target.classList.add('plan__cell_error');
+            } else {
+              evt.target.classList.add('plan__cell_success');
+            }
+          })
         } else if (this.size === 2) {
           addCellSuccess(this.planCell, evt.target, this.xCord);
         } else if (this.size === 3) {

@@ -1,35 +1,36 @@
 import {createElementOnPlan, isEqual} from '../utils';
 
 export class Plan {
+  static busyCells = [];
+  static planCellBusy = [];
   constructor(planGrid, planCell) {
     this.planGrid = planGrid;
     this.planCell = planCell;
-    this.planCellBusy = [];
     this.btnReset = document.querySelector('.scheduler__action-reset');
     this.size = 66;
-    this.busyCells = [];
   }
-
   createElements(element, dropElement, xCord, size) {
     const elementClone = element.cloneNode(true);
     elementClone.removeChild(elementClone.querySelector('.object__name'));
     elementClone.children[0].removeAttribute('draggable');
     if (size === 1) {
       createElementOnPlan(elementClone, dropElement, xCord, this.size, size);
-      this.planCellBusy.push({'id':Number(elementClone.dataset.id), 'cell': [Number(dropElement.dataset.x), Number(dropElement.dataset.y)]});
+      Plan.planCellBusy.push({'id':Number(elementClone.dataset.id), 'cell': [Number(dropElement.dataset.x), Number(dropElement.dataset.y)]});
+      Plan.createBusyCells();
     } else {
       createElementOnPlan(elementClone, dropElement, xCord, this.size, size, this.planCell);
       elementClone.querySelector('.figure__button-rotate').addEventListener('click',(evt) => this.checkPossibilityRotate(evt, dropElement, size, elementClone));
       if(size === 2){
-        this.planCellBusy.push({
+        Plan.planCellBusy.push({
           'id':Number(elementClone.dataset.id),
           'cell': [
             [Number(dropElement.dataset.x), Number(dropElement.dataset.y)],
             [Number(dropElement.dataset.x) + (xCord <= 66 ? 1 : -1), Number(dropElement.dataset.y)]
           ]});
+        Plan.createBusyCells();
       }
       if(size === 3){
-        this.planCellBusy.push({
+        Plan.planCellBusy.push({
           'id':Number(elementClone.dataset.id),
           'cell': [
             [Number(dropElement.dataset.x), Number(dropElement.dataset.y)],
@@ -37,6 +38,7 @@ export class Plan {
             // eslint-disable-next-line no-nested-ternary
             [Number(dropElement.dataset.x) + (xCord <= 66 ? 2 : xCord <= 132 ? -1 : -2), Number(dropElement.dataset.y)]
           ]});
+        Plan.createBusyCells();
       }
     }
     this.planGrid.append(elementClone);
@@ -55,38 +57,42 @@ export class Plan {
     });
     objElementsPlan.forEach((item) => {
       item.remove();
-      this.planCellBusy = [];
+      Plan.planCellBusy = [];
     });
   }
 
-  checkPossibilityRotate(evt, cell, size, element) {
-    // eslint-disable-next-line
-    const rotateElement = this.planCellBusy.filter((cells)=> cells.id == element.dataset.id)[0];
-    rotateElement.cell.sort((a,b) => a[0] - b[0]);
-    this.busyCells = [];
-    this.planCellBusy.forEach((item) => {
+    static createBusyCells() {
+      Plan.busyCells = [];
+      Plan.planCellBusy.forEach((item) => {
       if(Array.isArray(item.cell[0])) {
         for(let i = 0; i < item.cell.length; i++) {
-          this.busyCells.push(item.cell[i]);
+          Plan.busyCells.push(item.cell[i]);
         }
       } else {
-        this.busyCells.push(item.cell);
+      Plan.busyCells.push(item.cell);
       }
-    });
+  });
+}
+  checkPossibilityRotate(evt, cell, size, element) {
+    // eslint-disable-next-line
+    Plan.createBusyCells();
+    const rotateElement = Plan.planCellBusy.filter((cells)=> cells.id == element.dataset.id)[0];
+    rotateElement.cell.sort((a,b) => a[0] - b[0]);
+
     if(!element.classList.contains('objects__item-rotated')) {
       const arrP = [(parseInt(element.style.left, 10) / 66) + 1, (parseInt(element.style.top, 10) / 66) + size];
       if(size === 3) {
         const arrSecondP = [(parseInt(element.style.left, 10) / 66) + 1, (parseInt(element.style.top, 10) / 66) + size - 1];
-        for (let i = 0; i < this.planCellBusy.length; i++) {
-          if (this.busyCells.some((item) => isEqual(item, arrSecondP))) {
+        for (let i = 0; i < Plan.planCellBusy.length; i++) {
+          if (Plan.busyCells.some((item) => isEqual(item, arrSecondP))) {
             element.classList.add('shake-on-hover');
             setTimeout(() => element.classList.remove('shake-on-hover'), 400);
             return;
           }
         }
       }
-      for (let i = 0; i < this.planCellBusy.length; i++) {
-        if (this.busyCells.some((item) => isEqual(item, arrP))) {
+      for (let i = 0; i < Plan.planCellBusy.length; i++) {
+        if (Plan.busyCells.some((item) => isEqual(item, arrP))) {
           element.classList.add('shake-on-hover');
           setTimeout(() => element.classList.remove('shake-on-hover'), 400);
           return;
@@ -94,8 +100,8 @@ export class Plan {
       }
     } else if(element.classList.contains('objects__item-rotated')) {
       const arrP = [(parseInt(element.style.left, 10) / 66) + size, (parseInt(element.style.top, 10) / 66) + 1 ];
-      for (let i = 0; i < this.planCellBusy.length; i++) {
-        if (this.busyCells.some((item) => isEqual(item, arrP))) {
+      for (let i = 0; i < Plan.planCellBusy.length; i++) {
+        if (Plan.busyCells.some((item) => isEqual(item, arrP))) {
           element.classList.add('shake-on-hover');
           setTimeout(() => element.classList.remove('shake-on-hover'), 400);
           return;
@@ -111,7 +117,7 @@ export class Plan {
     if (!element.classList.contains('objects__item-rotated')) {
       element.classList.add('objects__item-rotated');
       // eslint-disable-next-line
-      this.planCellBusy = this.planCellBusy.filter((item)=> item.id != element.dataset.id);
+      Plan.planCellBusy = Plan.planCellBusy.filter((item)=> item.id != element.dataset.id);
       if(size === 2) {
         rotateElement.cell[1] = [rotateElement.cell[1][0] - 1, rotateElement.cell[1][1] + 1];
       } else {
@@ -119,17 +125,17 @@ export class Plan {
         rotateElement.cell[2] = [rotateElement.cell[2][0] - 2, rotateElement.cell[2][1] + 2] ;
 
       }
-      this.planCellBusy.push(rotateElement);
+      Plan.planCellBusy.push(rotateElement);
     } else {
       // eslint-disable-next-line
-      this.planCellBusy = this.planCellBusy.filter((item)=> item.id != element.dataset.id);
+      Plan.planCellBusy = Plan.planCellBusy.filter((item)=> item.id != element.dataset.id);
       if(size === 2) {
         rotateElement.cell[1] = [rotateElement.cell[1][0] + 1, rotateElement.cell[1][1] - 1];
       } else {
         rotateElement.cell[1] = [rotateElement.cell[1][0] + 1, rotateElement.cell[1][1] - 1];
         rotateElement.cell[2] = [rotateElement.cell[2][0] + 2, rotateElement.cell[2][1] - 2];
       }
-      this.planCellBusy.push(rotateElement);
+      Plan.planCellBusy.push(rotateElement);
       element.classList.remove('objects__item-rotated');
     }
   }
@@ -141,7 +147,7 @@ export class Plan {
       item.addEventListener('click', (evt) => {
         const deleteElement = evt.currentTarget.parentNode.parentNode.parentNode;
         // eslint-disable-next-line
-        this.planCellBusy = this.planCellBusy.filter((elements)=> elements.id != deleteElement.dataset.id);
+        Plan.planCellBusy = Plan.planCellBusy.filter((elements)=> elements.id != deleteElement.dataset.id);
         deleteElement.remove();
       });
     });

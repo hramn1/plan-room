@@ -1,4 +1,5 @@
 import {buttonOneSize, buttonSize, elementsInDrag} from './data';
+import {Plan} from './component/plan.js';
 
 const getRandomInteger = (a, b) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -78,6 +79,7 @@ export const createElementOnPlan = (elementClone, dropElement, xCord, size, size
   elementClone.style.left = `${(dropElement.dataset.x - shiftX) * size }px`;
   elementClone.style.top = `${(dropElement.dataset.y - shiftXSecond) * size }px`;
   elementClone.dataset.id = generateRandomIndex(1,100)();
+
 };
 export function isEqual(array1, array2) {
   return JSON.stringify(array1) === JSON.stringify(array2);
