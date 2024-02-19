@@ -58,6 +58,7 @@ export class Plan {
     objElementsPlan.forEach((item) => {
       item.remove();
       Plan.planCellBusy = [];
+      Plan.busyCells = [];
     });
   }
 
@@ -142,7 +143,6 @@ export class Plan {
 
   updatePlan() {
     const btnDeleteElement = document.querySelectorAll('.figure__button-delete');
-
     btnDeleteElement.forEach((item) => {
       item.addEventListener('click', (evt) => {
         const deleteElement = evt.currentTarget.parentNode.parentNode.parentNode;

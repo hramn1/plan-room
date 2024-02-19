@@ -26,12 +26,13 @@ export class DragObj {
       this.planCell.forEach((it) => {
         it.classList.add('plan__cell_hack')
       })
+
       const arrEvtTarget = [Number(evt.target.dataset.x), Number(evt.target.dataset.y)]
 
       if (evt.target.classList.contains('plan__cell')) {
         if (this.size === 1) {
+          evt.target.classList.add('plan__cell_success');
           Plan.busyCells.forEach((it)=>{
-            console.log(isEqual(arrEvtTarget, it))
             if(isEqual(arrEvtTarget, it)){
               evt.target.classList.add('plan__cell_error');
             } else {
@@ -51,6 +52,9 @@ export class DragObj {
     this.planCell.forEach((it) => {
       this.planGrid.addEventListener('dragleave', () => {
         if (this.size === 1) {
+          if(it.classList.contains('plan__cell_error')){
+            it.classList.remove('plan__cell_error');
+          }
           it.classList.remove('plan__cell_success');
           // it.classList.remove('plan__cell_error');
         } else {
@@ -74,7 +78,7 @@ export class DragObj {
       })
       const elementDrop = Array.from(this.elementsDrag).filter((item) => item.children[0].dataset.id === evt.dataTransfer.getData('id'));
       evt.stopPropagation();
-      if (evt.target.classList.contains('plan__cell_success')) {
+      if (evt.target.classList.contains('plan__cell_success') && !evt.target.classList.contains('plan__cell_error')) {
         if (this.size === 2 && this.xCord > 66) {
           evt.target.previousElementSibling.classList.remove('plan__cell_success');
         } else if (this.size === 2 && this.xCord <= 66) {
@@ -91,6 +95,9 @@ export class DragObj {
         }
         planContainer.createElements(elementDrop[0], evt.target, this.xCord, this.size);
         evt.target.classList.remove('plan__cell_success');
+      } else {
+        evt.target.classList.remove('plan__cell_success');
+        evt.target.classList.remove('plan__cell_error');
       }
     });
   }
