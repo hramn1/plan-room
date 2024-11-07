@@ -24,10 +24,10 @@ export class DragObj {
   dragenter() {
     this.planGrid.addEventListener('dragover', (evt) => {
       this.planCell.forEach((it) => {
-        it.classList.add('plan__cell_hack')
-      })
-
-      const arrEvtTarget = [Number(evt.target.dataset.x), Number(evt.target.dataset.y)]
+        it.classList.add('plan__cell_hack');
+      });
+      Plan.createBusyCells();
+      const arrEvtTarget = [Number(evt.target.dataset.x), Number(evt.target.dataset.y)];
 
       if (evt.target.classList.contains('plan__cell')) {
         if (this.size === 1) {
@@ -38,7 +38,7 @@ export class DragObj {
             } else {
               evt.target.classList.add('plan__cell_success');
             }
-          })
+          });
         } else if (this.size === 2) {
           addCellSuccess(this.planCell, evt.target, this.xCord);
         } else if (this.size === 3) {
@@ -74,8 +74,8 @@ export class DragObj {
     });
     this.planGrid.addEventListener('drop', (evt) => {
       this.planCell.forEach((it)=>{
-        it.classList.remove('plan__cell_hack')
-      })
+        it.classList.remove('plan__cell_hack');
+      });
       const elementDrop = Array.from(this.elementsDrag).filter((item) => item.children[0].dataset.id === evt.dataTransfer.getData('id'));
       evt.stopPropagation();
       if (evt.target.classList.contains('plan__cell_success') && !evt.target.classList.contains('plan__cell_error')) {
