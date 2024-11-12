@@ -1,5 +1,6 @@
 import {Plan} from './plan.js';
 import {addCellSuccess, addCellSuccessThree, isEqual, setSizeObj} from '../utils.js';
+import {COORDINATE_CORD, SIZE_ELEMENTS} from '../constants.js';
 
 export class DragObj {
   constructor(draggableObjElements, planCell, planGrid) {
@@ -7,7 +8,7 @@ export class DragObj {
     this.planCell = planCell;
     this.planGrid = planGrid;
     this.xCord = 0;
-    this.size = 2;
+    this.size = 0;
   }
 
   startDrag() {
@@ -28,6 +29,7 @@ export class DragObj {
       });
       Plan.createBusyCells();
       const arrEvtTarget = [Number(evt.target.dataset.x), Number(evt.target.dataset.y)];
+      const aeeEvtTargetSecond = [Number(evt.target.nextElementSibling.dataset.x), Number(evt.target.nextElementSibling.dataset.y)];
 
       if (evt.target.classList.contains('plan__cell')) {
         if (this.size === 1) {
@@ -41,6 +43,17 @@ export class DragObj {
           });
         } else if (this.size === 2) {
           addCellSuccess(this.planCell, evt.target, this.xCord);
+          Plan.busyCells.forEach((it)=>{
+            if(this.xCord <= COORDINATE_CORD.AfterTwo){
+              if(isEqual(arrEvtTarget, it) || isEqual(aeeEvtTargetSecond, it)){
+                evt.target.classList.add('plan__cell_error');
+                evt.target.nextElementSibling.classList.add('plan__cell_error');
+              } else {
+                evt.target.classList.add('plan__cell_success');
+              }
+            }
+
+          });
         } else if (this.size === 3) {
           addCellSuccessThree(this.planCell, evt.target, this.xCord);
         }
@@ -50,7 +63,9 @@ export class DragObj {
 
   dragleave() {
     this.planCell.forEach((it) => {
-      this.planGrid.addEventListener('dragleave', () => {
+      this.planGrid.addEventListener('dragleave', (evt) => {
+        const arrEvtTarget = [Number(evt.target.dataset.x), Number(evt.target.dataset.y)];
+        const aeeEvtTargetSecond = [Number(evt.target.nextElementSibling.dataset.x), Number(evt.target.nextElementSibling.dataset.y)];
         if (this.size === 1) {
           if(it.classList.contains('plan__cell_error')){
             it.classList.remove('plan__cell_error');
@@ -58,6 +73,16 @@ export class DragObj {
           it.classList.remove('plan__cell_success');
           // it.classList.remove('plan__cell_error');
         } else {
+          if (this.size === 2 && this.xCord <= COORDINATE_CORD.AfterTwo){
+            Plan.busyCells.forEach((item)=>{
+              if(this.xCord <= COORDINATE_CORD.AfterTwo){
+                if(!isEqual(arrEvtTarget, item) || !isEqual(aeeEvtTargetSecond, item)){
+                  evt.target.classList.remove('plan__cell_error');
+                  evt.target.nextElementSibling.classList.remove('plan__cell_error');
+                }
+              }
+            });
+          }
           this.planCell.forEach((item) => {
             if (Number(item.dataset.y === it.dataset.y)) {
               item.classList.remove('plan__cell_success');
@@ -79,17 +104,17 @@ export class DragObj {
       const elementDrop = Array.from(this.elementsDrag).filter((item) => item.children[0].dataset.id === evt.dataTransfer.getData('id'));
       evt.stopPropagation();
       if (evt.target.classList.contains('plan__cell_success') && !evt.target.classList.contains('plan__cell_error')) {
-        if (this.size === 2 && this.xCord > 66) {
+        if (this.size === SIZE_ELEMENTS.SizeTwo && this.xCord > COORDINATE_CORD.AfterTwo) {
           evt.target.previousElementSibling.classList.remove('plan__cell_success');
-        } else if (this.size === 2 && this.xCord <= 66) {
+        } else if (this.size === SIZE_ELEMENTS.SizeTwo && this.xCord <= COORDINATE_CORD.AfterTwo) {
           evt.target.nextElementSibling.classList.remove('plan__cell_success');
-        } else if (this.size === 3 && this.xCord <= 66) {
+        } else if (this.size === SIZE_ELEMENTS.SizeThree && this.xCord <= COORDINATE_CORD.AfterTwo) {
           evt.target.nextElementSibling.classList.remove('plan__cell_success');
           evt.target.nextElementSibling.nextElementSibling.classList.remove('plan__cell_success');
-        } else if (this.size === 3 && this.xCord > 66 && this.xCord <= 132) {
+        } else if (this.size === SIZE_ELEMENTS.SizeThree && this.xCord > COORDINATE_CORD.AfterTwo && this.xCord <= COORDINATE_CORD.AfterThree) {
           evt.target.nextElementSibling.classList.remove('plan__cell_success');
           evt.target.previousElementSibling.classList.remove('plan__cell_success');
-        } else if (this.size === 3 && this.xCord > 132) {
+        } else if (this.size === SIZE_ELEMENTS.SizeThree && this.xCord > COORDINATE_CORD.AfterThree) {
           evt.target.previousElementSibling.classList.remove('plan__cell_success');
           evt.target.previousElementSibling.previousElementSibling.classList.remove('plan__cell_success');
         }

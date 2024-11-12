@@ -4,7 +4,7 @@ import {Plan} from './plan';
 export function checkPossibilityRotate(evt, cell, size, element) {
   // eslint-disable-next-line
   Plan.createBusyCells();
-  const rotateElement = Plan.planCellBusy.filter((cells)=> cells.id == element.dataset.id)[0];
+  const rotateElement = Plan.planCellBusy.filter((cells)=> cells.id === Number(element.dataset.id))[0];
   rotateElement.cell.sort((a,b) => a[0] - b[0]);
 
   if(!element.classList.contains('objects__item-rotated')) {
@@ -49,8 +49,8 @@ export function checkPossibilityRotate(evt, cell, size, element) {
     if(size === 2) {
       rotateElement.cell[1] = [rotateElement.cell[1][0] - 1, rotateElement.cell[1][1] + 1];
     } else {
-      rotateElement.cell[1] = [rotateElement.cell[1][0] - 1, rotateElement.cell[1][1] + 1] ;
-      rotateElement.cell[2] = [rotateElement.cell[2][0] - 2, rotateElement.cell[2][1] + 2] ;
+      rotateElement.cell[1] = [rotateElement.cell[1][0] - 1, rotateElement.cell[1][1] + 1];
+      rotateElement.cell[2] = [rotateElement.cell[2][0] - 2, rotateElement.cell[2][1] + 2];
 
     }
     Plan.planCellBusy.push(rotateElement);
