@@ -1,6 +1,6 @@
-import {Plan} from './plan.js';
-import {addCellSuccess, addCellSuccessThree, isEqual, setSizeObj} from '../utils.js';
-import {COORDINATE_CORD, SIZE_ELEMENTS} from '../constants.js';
+import {Plan} from '@component/plan.js';
+import {addCellSuccess, addCellSuccessThree, isEqual, setSizeObj} from '@/utils.js';
+import {COORDINATE_CORD, SIZE_ELEMENTS} from '@/constants';
 
 export class DragObj {
   constructor(draggableObjElements, planCell, planGrid) {
@@ -29,7 +29,10 @@ export class DragObj {
       });
       Plan.createBusyCells();
       const arrEvtTarget = [Number(evt.target.dataset.x), Number(evt.target.dataset.y)];
-      const aeeEvtTargetSecond = [Number(evt.target.nextElementSibling.dataset.x), Number(evt.target.nextElementSibling.dataset.y)];
+      let arrEvtTargetSecond;
+      if (evt.target.nextElementSibling !== null) {
+        arrEvtTargetSecond = [Number(evt.target.nextElementSibling.dataset.x), Number(evt.target.nextElementSibling.dataset.y)];
+      }
 
       if (evt.target.classList.contains('plan__cell')) {
         if (this.size === 1) {
@@ -45,9 +48,9 @@ export class DragObj {
           addCellSuccess(this.planCell, evt.target, this.xCord);
           Plan.busyCells.forEach((it)=>{
             if(this.xCord <= COORDINATE_CORD.AfterTwo){
-              if(isEqual(arrEvtTarget, it) || isEqual(aeeEvtTargetSecond, it)){
+              if(isEqual(arrEvtTarget, it) || isEqual(arrEvtTargetSecond, it)){
                 evt.target.classList.add('plan__cell_error');
-                evt.target.nextElementSibling.classList.add('plan__cell_error');
+                evt.target.nextElementSibling?.classList.add('plan__cell_error');
               } else {
                 evt.target.classList.add('plan__cell_success');
               }
@@ -65,7 +68,11 @@ export class DragObj {
     this.planCell.forEach((it) => {
       this.planGrid.addEventListener('dragleave', (evt) => {
         const arrEvtTarget = [Number(evt.target.dataset.x), Number(evt.target.dataset.y)];
-        const aeeEvtTargetSecond = [Number(evt.target.nextElementSibling.dataset.x), Number(evt.target.nextElementSibling.dataset.y)];
+        let arrEvtTargetSecond;
+
+        if (evt.target.nextElementSibling !== null) {
+          arrEvtTargetSecond = [Number(evt.target.nextElementSibling.dataset.x), Number(evt.target.nextElementSibling.dataset.y)];
+        }
         if (this.size === 1) {
           if(it.classList.contains('plan__cell_error')){
             it.classList.remove('plan__cell_error');
@@ -76,9 +83,9 @@ export class DragObj {
           if (this.size === 2 && this.xCord <= COORDINATE_CORD.AfterTwo){
             Plan.busyCells.forEach((item)=>{
               if(this.xCord <= COORDINATE_CORD.AfterTwo){
-                if(!isEqual(arrEvtTarget, item) || !isEqual(aeeEvtTargetSecond, item)){
+                if(!isEqual(arrEvtTarget, item) || !isEqual(arrEvtTargetSecond, item)){
                   evt.target.classList.remove('plan__cell_error');
-                  evt.target.nextElementSibling.classList.remove('plan__cell_error');
+                  evt.target.nextElementSibling?.classList.remove('plan__cell_error');
                 }
               }
             });
@@ -98,9 +105,7 @@ export class DragObj {
       evt.preventDefault();
     });
     this.planGrid.addEventListener('drop', (evt) => {
-      this.planCell.forEach((it)=>{
-        it.classList.remove('plan__cell_hack');
-      });
+
       const elementDrop = Array.from(this.elementsDrag).filter((item) => item.children[0].dataset.id === evt.dataTransfer.getData('id'));
       evt.stopPropagation();
       if (evt.target.classList.contains('plan__cell_success') && !evt.target.classList.contains('plan__cell_error')) {
@@ -123,7 +128,14 @@ export class DragObj {
       } else {
         evt.target.classList.remove('plan__cell_success');
         evt.target.classList.remove('plan__cell_error');
+        evt.target.nextElementSibling.classList.remove('plan__cell_error');
+        evt.target.previousElementSibling?.classList.remove('plan__cell_error');
       }
+      this.planCell.forEach((it)=>{
+        it.classList.remove('plan__cell_hack');
+        it.classList.remove('plan__cell_success');
+        it.classList.remove('plan__cell_error');
+      });
     });
   }
 

@@ -1,4 +1,4 @@
-import {createElementOnPlan} from '../utils';
+import {createElementOnPlan} from '@/utils';
 import {checkPossibilityRotate} from './rotate-obj';
 
 export class Plan {
@@ -64,20 +64,18 @@ export class Plan {
     });
   }
 
-    static createBusyCells() {
-      Plan.busyCells = [];
-      Plan.planCellBusy.forEach((item) => {
+  static createBusyCells() {
+    Plan.busyCells = [];
+    Plan.planCellBusy.forEach((item) => {
       if(Array.isArray(item.cell[0])) {
         for(let i = 0; i < item.cell.length; i++) {
           Plan.busyCells.push(item.cell[i]);
         }
       } else {
-      Plan.busyCells.push(item.cell);
+        Plan.busyCells.push(item.cell);
       }
-  });
-}
-
-
+    });
+  }
 
   updatePlan() {
     const btnDeleteElement = document.querySelectorAll('.figure__button-delete');

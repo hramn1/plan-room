@@ -1,4 +1,4 @@
-import {DragObj} from './component/drag-obj.js';
+import {DragObj} from '@component/drag-obj';
 
 const draggableObjElements = document.querySelector('.constructor__aside').querySelectorAll('.objects__item');
 const planGrid = document.querySelector('.plan');

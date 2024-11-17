@@ -1,15 +1,16 @@
-import {isEqual} from '../utils';
+import {isEqual} from '@/utils';
 import {Plan} from './plan';
+import {SIZE_ELEMENTS} from '@/constants';
 
 export function checkPossibilityRotate(evt, cell, size, element) {
-  // eslint-disable-next-line
   Plan.createBusyCells();
-  const rotateElement = Plan.planCellBusy.filter((cells)=> cells.id === Number(element.dataset.id))[0];
+  const rotateElement = Plan.planCellBusy.filter((cells)=> cells.id === Number(element.dataset.id)).shift();
+
   rotateElement.cell.sort((a,b) => a[0] - b[0]);
 
   if(!element.classList.contains('objects__item-rotated')) {
     const arrP = [(parseInt(element.style.left, 10) / 66) + 1, (parseInt(element.style.top, 10) / 66) + size];
-    if(size === 3) {
+    if(size === SIZE_ELEMENTS.SizeThree) {
       const arrSecondP = [(parseInt(element.style.left, 10) / 66) + 1, (parseInt(element.style.top, 10) / 66) + size - 1];
       for (let i = 0; i < Plan.planCellBusy.length; i++) {
         if (Plan.busyCells.some((item) => isEqual(item, arrSecondP))) {
