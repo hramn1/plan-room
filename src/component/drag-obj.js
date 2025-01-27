@@ -45,6 +45,12 @@ export class DragObj {
             }
           });
         } else if (this.size === 2) {
+          if (this.xCord <= COORDINATE_CORD.AfterTwo && evt.target.dataset.x === '10'){
+            evt.target.classList.add('plan__cell_error');
+          } else {
+            console.log(3)
+            evt.target.classList.remove('plan__cell_error');
+          }
           addCellSuccess(this.planCell, evt.target, this.xCord);
           Plan.busyCells.forEach((it)=>{
             if(this.xCord <= COORDINATE_CORD.AfterTwo){
@@ -55,7 +61,6 @@ export class DragObj {
                 evt.target.classList.add('plan__cell_success');
               }
             }
-
           });
         } else if (this.size === 3) {
           addCellSuccessThree(this.planCell, evt.target, this.xCord);
@@ -128,7 +133,7 @@ export class DragObj {
       } else {
         evt.target.classList.remove('plan__cell_success');
         evt.target.classList.remove('plan__cell_error');
-        evt.target.nextElementSibling.classList.remove('plan__cell_error');
+        evt.target.nextElementSibling?.classList.remove('plan__cell_error');
         evt.target.previousElementSibling?.classList.remove('plan__cell_error');
       }
       this.planCell.forEach((it)=>{
