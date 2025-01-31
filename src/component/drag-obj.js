@@ -48,8 +48,7 @@ export class DragObj {
           if (this.xCord <= COORDINATE_CORD.AfterTwo && evt.target.dataset.x === '10'){
             evt.target.classList.add('plan__cell_error');
           } else {
-            console.log(3)
-            evt.target.classList.remove('plan__cell_error');
+            evt.target.nextElementSibling.classList.remove('plan__cell_error');
           }
           addCellSuccess(this.planCell, evt.target, this.xCord);
           Plan.busyCells.forEach((it)=>{
@@ -83,7 +82,6 @@ export class DragObj {
             it.classList.remove('plan__cell_error');
           }
           it.classList.remove('plan__cell_success');
-          // it.classList.remove('plan__cell_error');
         } else {
           if (this.size === 2 && this.xCord <= COORDINATE_CORD.AfterTwo){
             Plan.busyCells.forEach((item)=>{
@@ -94,6 +92,9 @@ export class DragObj {
                 }
               }
             });
+            if(evt.target.dataset.x === '10'){
+              evt.target.classList.remove('plan__cell_error');
+            }
           }
           this.planCell.forEach((item) => {
             if (Number(item.dataset.y === it.dataset.y)) {
@@ -110,7 +111,6 @@ export class DragObj {
       evt.preventDefault();
     });
     this.planGrid.addEventListener('drop', (evt) => {
-
       const elementDrop = Array.from(this.elementsDrag).filter((item) => item.children[0].dataset.id === evt.dataTransfer.getData('id'));
       evt.stopPropagation();
       if (evt.target.classList.contains('plan__cell_success') && !evt.target.classList.contains('plan__cell_error')) {
