@@ -29,9 +29,10 @@ export class DragObj {
       });
       Plan.createBusyCells();
       const arrEvtTarget = [Number(evt.target.dataset.x), Number(evt.target.dataset.y)];
-      let arrEvtTargetSecond;
+      let arrEvtTargetSecond, arrEvtTargetFirst;
       if (evt.target.nextElementSibling !== null) {
         arrEvtTargetSecond = [Number(evt.target.nextElementSibling.dataset.x), Number(evt.target.nextElementSibling.dataset.y)];
+        arrEvtTargetFirst = [Number(evt.target.previousElementSibling.dataset.x), Number(evt.target.previousElementSibling.dataset.y)];
       }
 
       if (evt.target.classList.contains('plan__cell')) {
@@ -60,6 +61,14 @@ export class DragObj {
                 evt.target.classList.add('plan__cell_success');
               }
             }
+            if(this.xCord > COORDINATE_CORD.AfterTwo){
+              if(isEqual(arrEvtTarget, it) || isEqual(arrEvtTargetFirst, it)){
+                evt.target.classList.add('plan__cell_error');
+                evt.target.previousElementSibling?.classList.add('plan__cell_error');
+              } else {
+                evt.target.classList.add('plan__cell_success');
+              }
+            }
           });
         } else if (this.size === 3) {
           addCellSuccessThree(this.planCell, evt.target, this.xCord);
@@ -72,10 +81,11 @@ export class DragObj {
     this.planCell.forEach((it) => {
       this.planGrid.addEventListener('dragleave', (evt) => {
         const arrEvtTarget = [Number(evt.target.dataset.x), Number(evt.target.dataset.y)];
-        let arrEvtTargetSecond;
+        let arrEvtTargetSecond, arrEvtTargetFirst;
 
         if (evt.target.nextElementSibling !== null) {
           arrEvtTargetSecond = [Number(evt.target.nextElementSibling.dataset.x), Number(evt.target.nextElementSibling.dataset.y)];
+          arrEvtTargetFirst = [Number(evt.target.previousElementSibling.dataset.x), Number(evt.target.previousElementSibling.dataset.y)];
         }
         if (this.size === 1) {
           if(it.classList.contains('plan__cell_error')){
@@ -83,12 +93,18 @@ export class DragObj {
           }
           it.classList.remove('plan__cell_success');
         } else {
-          if (this.size === 2 && this.xCord <= COORDINATE_CORD.AfterTwo){
+          if (this.size === 2){
             Plan.busyCells.forEach((item)=>{
               if(this.xCord <= COORDINATE_CORD.AfterTwo){
                 if(!isEqual(arrEvtTarget, item) || !isEqual(arrEvtTargetSecond, item)){
                   evt.target.classList.remove('plan__cell_error');
                   evt.target.nextElementSibling?.classList.remove('plan__cell_error');
+                }
+              }
+              if(this.xCord > COORDINATE_CORD.AfterTwo){
+                if(!isEqual(arrEvtTarget, item) || !isEqual(arrEvtTargetFirst, item)){
+                  evt.target.classList.remove('plan__cell_error');
+                  evt.target.previousElementSibling?.classList.remove('plan__cell_error');
                 }
               }
             });
