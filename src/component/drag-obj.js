@@ -31,10 +31,9 @@ export class DragObj {
       const arrEvtTarget = [Number(evt.target.dataset.x), Number(evt.target.dataset.y)];
       let arrEvtTargetSecond, arrEvtTargetFirst;
       if (evt.target.nextElementSibling !== null) {
-        arrEvtTargetSecond = [Number(evt.target.nextElementSibling.dataset.x), Number(evt.target.nextElementSibling.dataset.y)];
-        arrEvtTargetFirst = [Number(evt.target.previousElementSibling.dataset.x), Number(evt.target.previousElementSibling.dataset.y)];
+        arrEvtTargetSecond = [Number(evt.target?.nextElementSibling?.dataset.x), Number(evt.target?.nextElementSibling?.dataset.y)];
+        arrEvtTargetFirst = [Number(evt.target?.previousElementSibling?.dataset.x), Number(evt.target?.previousElementSibling?.dataset.y)];
       }
-
       if (evt.target.classList.contains('plan__cell')) {
         if (this.size === 1) {
           evt.target.classList.add('plan__cell_success');
@@ -49,14 +48,16 @@ export class DragObj {
           if (this.xCord <= COORDINATE_CORD.AfterTwo && evt.target.dataset.x === '10'){
             evt.target.classList.add('plan__cell_error');
           } else {
-            evt.target.nextElementSibling.classList.remove('plan__cell_error');
+            evt.target.nextElementSibling?.classList.remove('plan__cell_error');
           }
           addCellSuccess(this.planCell, evt.target, this.xCord);
           Plan.busyCells.forEach((it)=>{
             if(this.xCord <= COORDINATE_CORD.AfterTwo){
               if(isEqual(arrEvtTarget, it) || isEqual(arrEvtTargetSecond, it)){
                 evt.target.classList.add('plan__cell_error');
-                evt.target.nextElementSibling?.classList.add('plan__cell_error');
+                if(arrEvtTarget[0] !== 10){
+                  evt.target.nextElementSibling?.classList.add('plan__cell_error');
+                }
               } else {
                 evt.target.classList.add('plan__cell_success');
               }
@@ -64,7 +65,7 @@ export class DragObj {
             if(this.xCord > COORDINATE_CORD.AfterTwo){
               if(isEqual(arrEvtTarget, it) || isEqual(arrEvtTargetFirst, it)){
                 evt.target.classList.add('plan__cell_error');
-                evt.target.previousElementSibling?.classList.add('plan__cell_error');
+                evt.target.previousElementSibling?.classListssList.add('plan__cell_error');
               } else {
                 evt.target.classList.add('plan__cell_success');
               }
@@ -84,8 +85,8 @@ export class DragObj {
         let arrEvtTargetSecond, arrEvtTargetFirst;
 
         if (evt.target.nextElementSibling !== null) {
-          arrEvtTargetSecond = [Number(evt.target.nextElementSibling.dataset.x), Number(evt.target.nextElementSibling.dataset.y)];
-          arrEvtTargetFirst = [Number(evt.target.previousElementSibling.dataset.x), Number(evt.target.previousElementSibling.dataset.y)];
+          arrEvtTargetSecond = [Number(evt.target?.nextElementSibling?.dataset.x), Number(evt.target?.nextElementSibling?.dataset.y)];
+          arrEvtTargetFirst = [Number(evt.target?.previousElementSibling?.dataset.x), Number(evt.target?.previousElementSibling?.dataset.y)];
         }
         if (this.size === 1) {
           if(it.classList.contains('plan__cell_error')){
