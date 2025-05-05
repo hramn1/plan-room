@@ -1,5 +1,5 @@
 import {buttonOneSize, buttonSize, elementsInDrag} from './data';
-import {Plan} from './component/plan.js';
+import {NEXT_PREV_ELEMENTS} from '@/constants';
 
 const getRandomInteger = (a, b) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -83,4 +83,18 @@ export const createElementOnPlan = (elementClone, dropElement, xCord, size, size
 };
 export function isEqual(array1, array2) {
   return JSON.stringify(array1) === JSON.stringify(array2);
+}
+export function dragCheck(evt, it, afterTwo) {
+  console.log(this)
+  const arrTarget = !afterTwo ? this.arrEvtTargetSecond : this.arrEvtTargetFirst;
+  if(isEqual(this.arrEvtTarget, it) || isEqual(arrTarget, it)){
+    evt.target.classList.add('plan__cell_error');
+    if(this.arrEvtTarget[0] !== 10 && !afterTwo){
+      evt.target[NEXT_PREV_ELEMENTS.Next]?.classList?.add('plan__cell_error');
+    } else if(afterTwo){
+      evt.target[NEXT_PREV_ELEMENTS.Prev]?.classList.add('plan__cell_error');
+    }
+  } else {
+    evt.target.classList?.add('plan__cell_success');
+  }
 }

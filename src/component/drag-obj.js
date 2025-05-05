@@ -1,5 +1,5 @@
 import {Plan} from '@component/plan.js';
-import {addCellSuccess, addCellSuccessThree, isEqual, setSizeObj} from '@/utils.js';
+import {addCellSuccess, addCellSuccessThree, dragCheck, isEqual, setSizeObj} from '@/utils.js';
 import {COORDINATE_CORD, SIZE_ELEMENTS} from '@/constants';
 
 export class DragObj {
@@ -9,6 +9,10 @@ export class DragObj {
     this.planGrid = planGrid;
     this.xCord = 0;
     this.size = 0;
+    this.arrEvtTarget = null;
+    this.arrEvtTargetSecond = null;
+    this.arrEvtTargetFirst = null;
+    this.dragElementNow = null;
   }
 
   startDrag() {
@@ -17,33 +21,59 @@ export class DragObj {
         const rect = evt.target.getBoundingClientRect();
         this.xCord = evt.clientX - rect.left;
         this.size = setSizeObj(evt.target);
+        this.dragElementNow = evt.target;
         evt.dataTransfer.setData('id', evt.target.dataset.id);
       });
     });
   }
 
+  #utilsDragObj(evt) {
+    this.arrEvtTarget = [Number(evt.target.dataset.x), Number(evt.target.dataset.y)];
+    if (evt.target.nextElementSibling !== null) {
+      this.arrEvtTargetSecond = [Number(evt.target?.nextElementSibling?.dataset.x), Number(evt.target?.nextElementSibling?.dataset.y)];
+      this.arrEvtTargetFirst = [Number(evt.target?.previousElementSibling?.dataset.x), Number(evt.target?.previousElementSibling?.dataset.y)];
+    }
+  }
+
+  #checkBusyCells(evt, size = 1) {
+    if(size === 1) {
+      Plan.busyCells.forEach((it)=>{
+        if(isEqual(this.arrEvtTarget , it)){
+          evt.target.classList.add('plan__cell_error');
+        } else {
+          evt.target.classList.add('plan__cell_success');
+        }
+      });
+    } else if(size === 2) {
+      Plan.busyCells.forEach((it)=>{
+        if(this.xCord <= COORDINATE_CORD.AfterTwo){
+          dragCheck.call(this, evt, it, false);
+        }
+        if(this.xCord > COORDINATE_CORD.AfterTwo){
+          dragCheck.call(this, evt, it, true);
+        }
+      });
+    }
+  }
+
   dragenter() {
+    document.addEventListener('dragover', (evt)=>{
+      let lastCell;
+      if(evt.target.classList.contains('plan__cell')){
+        lastCell = evt.target
+      }
+      console.log(evt);
+    });
     this.planGrid.addEventListener('dragover', (evt) => {
       this.planCell.forEach((it) => {
         it.classList.add('plan__cell_hack');
       });
       Plan.createBusyCells();
-      const arrEvtTarget = [Number(evt.target.dataset.x), Number(evt.target.dataset.y)];
-      let arrEvtTargetSecond, arrEvtTargetFirst;
-      if (evt.target.nextElementSibling !== null) {
-        arrEvtTargetSecond = [Number(evt.target?.nextElementSibling?.dataset.x), Number(evt.target?.nextElementSibling?.dataset.y)];
-        arrEvtTargetFirst = [Number(evt.target?.previousElementSibling?.dataset.x), Number(evt.target?.previousElementSibling?.dataset.y)];
-      }
+      this.#utilsDragObj(evt);
       if (evt.target.classList.contains('plan__cell')) {
         if (this.size === 1) {
           evt.target.classList.add('plan__cell_success');
-          Plan.busyCells.forEach((it)=>{
-            if(isEqual(arrEvtTarget, it)){
-              evt.target.classList.add('plan__cell_error');
-            } else {
-              evt.target.classList.add('plan__cell_success');
-            }
-          });
+          this.#checkBusyCells(evt);
         } else if (this.size === 2) {
           if (this.xCord <= COORDINATE_CORD.AfterTwo && evt.target.dataset.x === '10'){
             evt.target.classList.add('plan__cell_error');
@@ -51,26 +81,7 @@ export class DragObj {
             evt.target.nextElementSibling?.classList.remove('plan__cell_error');
           }
           addCellSuccess(this.planCell, evt.target, this.xCord);
-          Plan.busyCells.forEach((it)=>{
-            if(this.xCord <= COORDINATE_CORD.AfterTwo){
-              if(isEqual(arrEvtTarget, it) || isEqual(arrEvtTargetSecond, it)){
-                evt.target.classList.add('plan__cell_error');
-                if(arrEvtTarget[0] !== 10){
-                  evt.target.nextElementSibling?.classList.add('plan__cell_error');
-                }
-              } else {
-                evt.target.classList.add('plan__cell_success');
-              }
-            }
-            if(this.xCord > COORDINATE_CORD.AfterTwo){
-              if(isEqual(arrEvtTarget, it) || isEqual(arrEvtTargetFirst, it)){
-                evt.target.classList.add('plan__cell_error');
-                evt.target.previousElementSibling?.classListssList.add('plan__cell_error');
-              } else {
-                evt.target.classList.add('plan__cell_success');
-              }
-            }
-          });
+          this.#checkBusyCells(evt, 2);
         } else if (this.size === 3) {
           addCellSuccessThree(this.planCell, evt.target, this.xCord);
         }
@@ -81,29 +92,23 @@ export class DragObj {
   dragleave() {
     this.planCell.forEach((it) => {
       this.planGrid.addEventListener('dragleave', (evt) => {
-        const arrEvtTarget = [Number(evt.target.dataset.x), Number(evt.target.dataset.y)];
-        let arrEvtTargetSecond, arrEvtTargetFirst;
-
-        if (evt.target.nextElementSibling !== null) {
-          arrEvtTargetSecond = [Number(evt.target?.nextElementSibling?.dataset.x), Number(evt.target?.nextElementSibling?.dataset.y)];
-          arrEvtTargetFirst = [Number(evt.target?.previousElementSibling?.dataset.x), Number(evt.target?.previousElementSibling?.dataset.y)];
-        }
+        this.#utilsDragObj(evt);
         if (this.size === 1) {
-          if(it.classList.contains('plan__cell_error')){
+          if(it.classList.contains('plan__cell_error')) {
             it.classList.remove('plan__cell_error');
           }
           it.classList.remove('plan__cell_success');
         } else {
-          if (this.size === 2){
-            Plan.busyCells.forEach((item)=>{
-              if(this.xCord <= COORDINATE_CORD.AfterTwo){
-                if(!isEqual(arrEvtTarget, item) || !isEqual(arrEvtTargetSecond, item)){
+          if (this.size === 2) {
+            Plan.busyCells.forEach((item)=> {
+              if(this.xCord <= COORDINATE_CORD.AfterTwo) {
+                if(!isEqual(this.arrEvtTarget, item) || !isEqual(this.arrEvtTargetSecond, item)) {
                   evt.target.classList.remove('plan__cell_error');
                   evt.target.nextElementSibling?.classList.remove('plan__cell_error');
                 }
               }
-              if(this.xCord > COORDINATE_CORD.AfterTwo){
-                if(!isEqual(arrEvtTarget, item) || !isEqual(arrEvtTargetFirst, item)){
+              if(this.xCord > COORDINATE_CORD.AfterTwo) {
+                if(!isEqual(this.arrEvtTarget, item) || !isEqual(this.arrEvtTargetFirst, item)) {
                   evt.target.classList.remove('plan__cell_error');
                   evt.target.previousElementSibling?.classList.remove('plan__cell_error');
                 }

@@ -7,3 +7,7 @@ export const COORDINATE_CORD = {
   AfterTwo: 66,
   AfterThree: 132,
 };
+export const NEXT_PREV_ELEMENTS = {
+  Prev: 'previousElementSibling',
+  Next: 'nextElementSibling',
+};
