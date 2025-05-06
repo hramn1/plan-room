@@ -85,7 +85,6 @@ export function isEqual(array1, array2) {
   return JSON.stringify(array1) === JSON.stringify(array2);
 }
 export function dragCheck(evt, it, afterTwo) {
-  console.log(this)
   const arrTarget = !afterTwo ? this.arrEvtTargetSecond : this.arrEvtTargetFirst;
   if(isEqual(this.arrEvtTarget, it) || isEqual(arrTarget, it)){
     evt.target.classList.add('plan__cell_error');

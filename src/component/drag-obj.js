@@ -60,9 +60,18 @@ export class DragObj {
     document.addEventListener('dragover', (evt)=>{
       let lastCell;
       if(evt.target.classList.contains('plan__cell')){
-        lastCell = evt.target
+        this.dragElementNow = evt.target;
       }
-      console.log(evt);
+      if(!evt.target.classList.contains('plan__cell') && this.dragElementNow.dataset.x === '1'){
+        if(evt.clientY>120 &&  evt.clientY < (120 + (6 * 66))){
+          this.planCell.forEach((item) => {
+            if(item.dataset.y == Math.floor(evt.clientY - 120) / 66 && item.dataset.x === '1'){
+              item.classList.add('plan__cell_error');
+            }
+          })
+        }
+        // this.dragElementNow = evt.target;
+      }
     });
     this.planGrid.addEventListener('dragover', (evt) => {
       this.planCell.forEach((it) => {
@@ -76,6 +85,8 @@ export class DragObj {
           this.#checkBusyCells(evt);
         } else if (this.size === 2) {
           if (this.xCord <= COORDINATE_CORD.AfterTwo && evt.target.dataset.x === '10'){
+            evt.target.classList.add('plan__cell_error');
+          } else if (this.xCord > COORDINATE_CORD.AfterTwo && evt.target.dataset.x === '1') {
             evt.target.classList.add('plan__cell_error');
           } else {
             evt.target.nextElementSibling?.classList.remove('plan__cell_error');
@@ -114,7 +125,7 @@ export class DragObj {
                 }
               }
             });
-            if(evt.target.dataset.x === '10'){
+            if(evt.target.dataset.x === '10' || evt.target.dataset.x === '1'){
               evt.target.classList.remove('plan__cell_error');
             }
           }
