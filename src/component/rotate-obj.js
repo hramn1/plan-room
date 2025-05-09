@@ -2,6 +2,16 @@ import {isEqual} from '@/utils';
 import {Plan} from './plan';
 import {SIZE_ELEMENTS} from '@/constants';
 
+function checkBusyCellsRotate(arrayP, element) {
+  for (let i = 0; i < Plan.planCellBusy.length; i++) {
+    if (Plan.busyCells.some((item) => isEqual(item, arrayP))) {
+      element.classList.add('shake-on-hover');
+      setTimeout(() => element.classList.remove('shake-on-hover'), 400);
+      return;
+    }
+  }
+}
+
 export function checkPossibilityRotate(evt, cell, size, element) {
   Plan.createBusyCells();
   const rotateElement = Plan.planCellBusy.filter((cells)=> cells.id === Number(element.dataset.id)).shift();
@@ -12,13 +22,7 @@ export function checkPossibilityRotate(evt, cell, size, element) {
     const arrP = [(parseInt(element.style.left, 10) / 66) + 1, (parseInt(element.style.top, 10) / 66) + size];
     if(size === SIZE_ELEMENTS.SizeThree) {
       const arrSecondP = [(parseInt(element.style.left, 10) / 66) + 1, (parseInt(element.style.top, 10) / 66) + size - 1];
-      for (let i = 0; i < Plan.planCellBusy.length; i++) {
-        if (Plan.busyCells.some((item) => isEqual(item, arrSecondP))) {
-          element.classList.add('shake-on-hover');
-          setTimeout(() => element.classList.remove('shake-on-hover'), 400);
-          return;
-        }
-      }
+      checkBusyCellsRotate(arrSecondP, element);
     }
     for (let i = 0; i < Plan.planCellBusy.length; i++) {
       if (Plan.busyCells.some((item) => isEqual(item, arrP))) {
@@ -29,13 +33,7 @@ export function checkPossibilityRotate(evt, cell, size, element) {
     }
   } else if(element.classList.contains('objects__item-rotated')) {
     const arrP = [(parseInt(element.style.left, 10) / 66) + size, (parseInt(element.style.top, 10) / 66) + 1 ];
-    for (let i = 0; i < Plan.planCellBusy.length; i++) {
-      if (Plan.busyCells.some((item) => isEqual(item, arrP))) {
-        element.classList.add('shake-on-hover');
-        setTimeout(() => element.classList.remove('shake-on-hover'), 400);
-        return;
-      }
-    }
+    checkBusyCellsRotate(arrP, element);
   }
   if (Number(cell.dataset.y) + Number(size) > 7){
     element.classList.add('shake-on-hover');
@@ -45,8 +43,7 @@ export function checkPossibilityRotate(evt, cell, size, element) {
 
   if (!element.classList.contains('objects__item-rotated')) {
     element.classList.add('objects__item-rotated');
-    // eslint-disable-next-line
-    Plan.planCellBusy = Plan.planCellBusy.filter((item)=> item.id != element.dataset.id);
+    Plan.planCellBusy = Plan.planCellBusy.filter((item)=> item.id !== element.dataset.id);
     if(size === 2) {
       rotateElement.cell[1] = [rotateElement.cell[1][0] - 1, rotateElement.cell[1][1] + 1];
     } else {
@@ -56,8 +53,7 @@ export function checkPossibilityRotate(evt, cell, size, element) {
     }
     Plan.planCellBusy.push(rotateElement);
   } else {
-    // eslint-disable-next-line
-    Plan.planCellBusy = Plan.planCellBusy.filter((item)=> item.id != element.dataset.id);
+    Plan.planCellBusy = Plan.planCellBusy.filter((item)=> item.id !== element.dataset.id);
     if(size === 2) {
       rotateElement.cell[1] = [rotateElement.cell[1][0] + 1, rotateElement.cell[1][1] - 1];
     } else {

@@ -58,19 +58,19 @@ export class DragObj {
 
   dragenter() {
     document.addEventListener('dragover', (evt)=>{
-      let lastCell;
       if(evt.target.classList.contains('plan__cell')){
         this.dragElementNow = evt.target;
+        evt.target.classList.remove('plan__cell_error');
       }
       if(!evt.target.classList.contains('plan__cell') && this.dragElementNow.dataset.x === '1'){
-        if(evt.clientY>120 &&  evt.clientY < (120 + (6 * 66))){
-          this.planCell.forEach((item) => {
-            if(item.dataset.y == Math.floor(evt.clientY - 120) / 66 && item.dataset.x === '1'){
-              item.classList.add('plan__cell_error');
-            }
-          })
-        }
-        // this.dragElementNow = evt.target;
+        const cordsY = Math.round((evt.clientY - 120) / 66);
+        this.planCell.forEach((item) => {
+          if(Number(item.dataset.y) === cordsY && item.dataset.x === '1'){
+            item.classList.add('plan__cell_error');
+          } else if (Number(item.dataset.y) === cordsY + 1 && item.dataset.x === '1' || Number(item.dataset.y) === cordsY - 1 && item.dataset.x === '1'){
+            item.classList.remove('plan__cell_error');
+          }
+        });
       }
     });
     this.planGrid.addEventListener('dragover', (evt) => {
@@ -144,6 +144,7 @@ export class DragObj {
       evt.preventDefault();
     });
     this.planGrid.addEventListener('drop', (evt) => {
+      this.dragElementNow = null;
       const elementDrop = Array.from(this.elementsDrag).filter((item) => item.children[0].dataset.id === evt.dataTransfer.getData('id'));
       evt.stopPropagation();
       if (evt.target.classList.contains('plan__cell_success') && !evt.target.classList.contains('plan__cell_error')) {
