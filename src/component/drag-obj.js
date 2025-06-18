@@ -1,6 +1,6 @@
 import {Plan} from '@component/plan.js';
 import {addCellSuccess, addCellSuccessThree, clearCells, dragCheck, isEqual, setSizeObj} from '@/utils.js';
-import {COORDINATE_CORD, SIZE_ELEMENTS} from '@/constants';
+import {COORDINATE_CORD} from '@/constants';
 
 export class DragObj {
   constructor(draggableObjElements, planCell, planGrid) {
@@ -57,22 +57,23 @@ export class DragObj {
   }
 
   dragenter() {
-    document.addEventListener('dragover', (evt) => {
-
-      if (evt.target.classList.contains('plan__cell')) {
-        this.dragElementNow = evt.target;
-      }
-      if (!evt.target.classList.contains('plan__cell') && this.dragElementNow.dataset.x === '1') {
-        if (evt.clientY > 120 && evt.clientY < (120 + (6 * 66))) {
-          this.planCell.forEach((item) => {
-            if (item.dataset.y == Math.floor(evt.clientY - 120) / 66 && item.dataset.x === '1') {
-              item.classList.add('plan__cell_error');
-            }
-          });
-        }
-        this.dragElementNow = evt.target;
-      }
-    });
+    // document.addEventListener('dragover', (evt) => {
+    //
+    //   if (evt.target.classList.contains('plan__cell')) {
+    //     this.dragElementNow = evt.target;
+    //   }
+    //   if (!evt.target.classList.contains('plan__cell') && this.dragElementNow.dataset.x === '1') {
+    //     console.log(4)
+    //     if (evt.clientY > 120 && evt.clientY < (120 + (6 * 66))) {
+    //       this.planCell.forEach((item) => {
+    //         if (item.dataset.y == Math.floor(evt.clientY - 120) / 66 && item.dataset.x === '1') {
+    //           item.classList.add('plan__cell_error');
+    //         }
+    //       });
+    //     }
+    //     // this.dragElementNow = evt.target;
+    //   }
+    // });
     this.planGrid.addEventListener('dragover', (evt) => {
       this.planCell.forEach((it) => {
         it.classList.add('plan__cell_hack');
@@ -157,9 +158,7 @@ export class DragObj {
         evt.target.previousElementSibling?.classList.remove('plan__cell_error');
       }
       this.planCell.forEach((it) => {
-        it.classList.remove('plan__cell_hack');
-        it.classList.remove('plan__cell_success');
-        it.classList.remove('plan__cell_error');
+        it.classList.remove('plan__cell_hack', 'plan__cell_success', 'plan__cell_error');
       });
     });
   }
