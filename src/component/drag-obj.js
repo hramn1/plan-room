@@ -70,7 +70,7 @@ export class DragObj {
             }
           });
         }
-        // this.dragElementNow = evt.target;
+        this.dragElementNow = evt.target;
       }
     });
     this.planGrid.addEventListener('dragover', (evt) => {
