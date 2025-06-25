@@ -57,10 +57,10 @@ export class DragObj {
   }
 
   dragenter() {
-    document.addEventListener('dragover', (evt) => {
-
-      if (evt.target.classList.contains('plan__cell')) {
+    document.addEventListener('dragover', (evt)=>{
+      if(evt.target.classList.contains('plan__cell')){
         this.dragElementNow = evt.target;
+        evt.target.classList.remove('plan__cell_error');
       }
       if (!evt.target.classList.contains('plan__cell') && this.dragElementNow.dataset.x === '1') {
         if (evt.clientY > 120 && evt.clientY < (120 + (6 * 66)) && evt.clientX > 240) {
@@ -144,6 +144,7 @@ export class DragObj {
       evt.preventDefault();
     });
     this.planGrid.addEventListener('drop', (evt) => {
+      this.dragElementNow = null;
       const elementDrop = Array.from(this.elementsDrag).filter((item) => item.children[0].dataset.id === evt.dataTransfer.getData('id'));
       evt.stopPropagation();
       if (evt.target.classList.contains('plan__cell_success') && !evt.target.classList.contains('plan__cell_error')) {
