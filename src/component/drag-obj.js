@@ -58,7 +58,6 @@ export class DragObj {
 
   dragenter() {
     document.addEventListener('dragover', (evt) => {
-
       if (evt.target.classList.contains('plan__cell')) {
         this.dragElementNow = evt.target;
       }
