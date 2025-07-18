@@ -1,6 +1,6 @@
 import {Plan} from '@component/plan.js';
-import {addCellSuccess, addCellSuccessThree, dragCheck, isEqual, setSizeObj} from '@/utils.js';
-import {COORDINATE_CORD, SIZE_ELEMENTS} from '@/constants';
+import {addCellSuccess, addCellSuccessThree, clearCells, dragCheck, isEqual, setSizeObj} from '@/utils.js';
+import {COORDINATE_CORD} from '@/constants';
 
 export class DragObj {
   constructor(draggableObjElements, planCell, planGrid) {
@@ -36,20 +36,20 @@ export class DragObj {
   }
 
   #checkBusyCells(evt, size = 1) {
-    if(size === 1) {
-      Plan.busyCells.forEach((it)=>{
-        if(isEqual(this.arrEvtTarget , it)){
+    if (size === 1) {
+      Plan.busyCells.forEach((it) => {
+        if (isEqual(this.arrEvtTarget, it)) {
           evt.target.classList.add('plan__cell_error');
         } else {
           evt.target.classList.add('plan__cell_success');
         }
       });
-    } else if(size === 2) {
-      Plan.busyCells.forEach((it)=>{
-        if(this.xCord <= COORDINATE_CORD.AfterTwo){
+    } else if (size === 2) {
+      Plan.busyCells.forEach((it) => {
+        if (this.xCord <= COORDINATE_CORD.AfterTwo) {
           dragCheck.call(this, evt, it, false);
         }
-        if(this.xCord > COORDINATE_CORD.AfterTwo){
+        if (this.xCord > COORDINATE_CORD.AfterTwo) {
           dragCheck.call(this, evt, it, true);
         }
       });
@@ -57,20 +57,21 @@ export class DragObj {
   }
 
   dragenter() {
-    document.addEventListener('dragover', (evt)=>{
-      if(evt.target.classList.contains('plan__cell')){
+    document.addEventListener('dragover', (evt) => {
+      if (evt.target.classList.contains('plan__cell')) {
         this.dragElementNow = evt.target;
         evt.target.classList.remove('plan__cell_error');
       }
-      if(!evt.target.classList.contains('plan__cell') && this.dragElementNow.dataset.x === '1'){
-        const cordsY = Math.round((evt.clientY - 120) / 66);
-        this.planCell.forEach((item) => {
-          if(Number(item.dataset.y) === cordsY && item.dataset.x === '1'){
-            item.classList.add('plan__cell_error');
-          } else if (Number(item.dataset.y) === cordsY + 1 && item.dataset.x === '1' || Number(item.dataset.y) === cordsY - 1 && item.dataset.x === '1'){
-            item.classList.remove('plan__cell_error');
-          }
-        });
+
+      if (!evt.target.classList.contains('plan__cell') && this.dragElementNow.dataset.x === '1') {
+        if (evt.clientY > 120 && evt.clientY < (120 + (6 * 66)) && evt.clientX > 240) {
+          this.planCell.forEach((item) => {
+            if (Number(item.dataset.y) === Math.round((evt.clientY - 120) / 66) && item.dataset.x === '1') {
+              item.classList.add('plan__cell_error');
+            }
+          });
+        }
+        // this.dragElementNow = evt.target;
       }
     });
     this.planGrid.addEventListener('dragover', (evt) => {
@@ -84,7 +85,7 @@ export class DragObj {
           evt.target.classList.add('plan__cell_success');
           this.#checkBusyCells(evt);
         } else if (this.size === 2) {
-          if (this.xCord <= COORDINATE_CORD.AfterTwo && evt.target.dataset.x === '10'){
+          if (this.xCord <= COORDINATE_CORD.AfterTwo && evt.target.dataset.x === '10') {
             evt.target.classList.add('plan__cell_error');
           } else if (this.xCord > COORDINATE_CORD.AfterTwo && evt.target.dataset.x === '1') {
             evt.target.classList.add('plan__cell_error');
@@ -105,27 +106,27 @@ export class DragObj {
       this.planGrid.addEventListener('dragleave', (evt) => {
         this.#utilsDragObj(evt);
         if (this.size === 1) {
-          if(it.classList.contains('plan__cell_error')) {
+          if (it.classList.contains('plan__cell_error')) {
             it.classList.remove('plan__cell_error');
           }
           it.classList.remove('plan__cell_success');
         } else {
           if (this.size === 2) {
-            Plan.busyCells.forEach((item)=> {
-              if(this.xCord <= COORDINATE_CORD.AfterTwo) {
-                if(!isEqual(this.arrEvtTarget, item) || !isEqual(this.arrEvtTargetSecond, item)) {
+            Plan.busyCells.forEach((item) => {
+              if (this.xCord <= COORDINATE_CORD.AfterTwo) {
+                if (!isEqual(this.arrEvtTarget, item) || !isEqual(this.arrEvtTargetSecond, item)) {
                   evt.target.classList.remove('plan__cell_error');
                   evt.target.nextElementSibling?.classList.remove('plan__cell_error');
                 }
               }
-              if(this.xCord > COORDINATE_CORD.AfterTwo) {
-                if(!isEqual(this.arrEvtTarget, item) || !isEqual(this.arrEvtTargetFirst, item)) {
+              if (this.xCord > COORDINATE_CORD.AfterTwo) {
+                if (!isEqual(this.arrEvtTarget, item) || !isEqual(this.arrEvtTargetFirst, item)) {
                   evt.target.classList.remove('plan__cell_error');
                   evt.target.previousElementSibling?.classList.remove('plan__cell_error');
                 }
               }
             });
-            if(evt.target.dataset.x === '10' || evt.target.dataset.x === '1'){
+            if (evt.target.dataset.x === '10' || evt.target.dataset.x === '1') {
               evt.target.classList.remove('plan__cell_error');
             }
           }
@@ -148,20 +149,7 @@ export class DragObj {
       const elementDrop = Array.from(this.elementsDrag).filter((item) => item.children[0].dataset.id === evt.dataTransfer.getData('id'));
       evt.stopPropagation();
       if (evt.target.classList.contains('plan__cell_success') && !evt.target.classList.contains('plan__cell_error')) {
-        if (this.size === SIZE_ELEMENTS.SizeTwo && this.xCord > COORDINATE_CORD.AfterTwo) {
-          evt.target.previousElementSibling.classList.remove('plan__cell_success');
-        } else if (this.size === SIZE_ELEMENTS.SizeTwo && this.xCord <= COORDINATE_CORD.AfterTwo) {
-          evt.target.nextElementSibling.classList.remove('plan__cell_success');
-        } else if (this.size === SIZE_ELEMENTS.SizeThree && this.xCord <= COORDINATE_CORD.AfterTwo) {
-          evt.target.nextElementSibling.classList.remove('plan__cell_success');
-          evt.target.nextElementSibling.nextElementSibling.classList.remove('plan__cell_success');
-        } else if (this.size === SIZE_ELEMENTS.SizeThree && this.xCord > COORDINATE_CORD.AfterTwo && this.xCord <= COORDINATE_CORD.AfterThree) {
-          evt.target.nextElementSibling.classList.remove('plan__cell_success');
-          evt.target.previousElementSibling.classList.remove('plan__cell_success');
-        } else if (this.size === SIZE_ELEMENTS.SizeThree && this.xCord > COORDINATE_CORD.AfterThree) {
-          evt.target.previousElementSibling.classList.remove('plan__cell_success');
-          evt.target.previousElementSibling.previousElementSibling.classList.remove('plan__cell_success');
-        }
+        clearCells(this.size, this.xCord, evt.target);
         planContainer.createElements(elementDrop[0], evt.target, this.xCord, this.size);
         evt.target.classList.remove('plan__cell_success');
       } else {
@@ -170,10 +158,8 @@ export class DragObj {
         evt.target.nextElementSibling?.classList.remove('plan__cell_error');
         evt.target.previousElementSibling?.classList.remove('plan__cell_error');
       }
-      this.planCell.forEach((it)=>{
-        it.classList.remove('plan__cell_hack');
-        it.classList.remove('plan__cell_success');
-        it.classList.remove('plan__cell_error');
+      this.planCell.forEach((it) => {
+        it.classList.remove('plan__cell_hack', 'plan__cell_success', 'plan__cell_error');
       });
     });
   }

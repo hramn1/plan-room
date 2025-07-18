@@ -1,5 +1,5 @@
 import {buttonOneSize, buttonSize, elementsInDrag} from './data';
-import {NEXT_PREV_ELEMENTS} from '@/constants';
+import {COORDINATE_CORD, NEXT_PREV_ELEMENTS, SIZE_ELEMENTS} from '@/constants';
 
 const getRandomInteger = (a, b) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -24,9 +24,9 @@ export const generateRandomIndex = (a, b) => {
 };
 export const setSizeObj = (elem) => {
   let size;
-  if(elementsInDrag.sizeOne.includes(elem.dataset.id)) {
+  if (elementsInDrag.sizeOne.includes(elem.dataset.id)) {
     size = 1;
-  } else if(elementsInDrag.sizeThree.includes(elem.dataset.id)) {
+  } else if (elementsInDrag.sizeThree.includes(elem.dataset.id)) {
     size = 3;
   } else {
     size = 2;
@@ -43,10 +43,10 @@ export const addCellSuccess = (planCells, elem, xCord) => {
 };
 export const addCellSuccessThree = (planCells, elem, xCord) => {
   let shiftX, shiftXSecond;
-  if(xCord <= 66) {
+  if (xCord <= 66) {
     shiftX = 1;
     shiftXSecond = 2;
-  } else if(xCord > 132) {
+  } else if (xCord > 132) {
     shiftX = -2;
     shiftXSecond = -1;
   } else {
@@ -63,12 +63,12 @@ export const addCellSuccessThree = (planCells, elem, xCord) => {
     }
   });
 };
-export const createElementOnPlan = (elementClone, dropElement, xCord, size, sizeElement) =>{
+export const createElementOnPlan = (elementClone, dropElement, xCord, size, sizeElement) => {
   let shiftX, shiftXSecond;
-  if(xCord <= 66) {
+  if (xCord <= 66) {
     shiftX = 1;
     shiftXSecond = 1;
-  } else if(xCord > 132) {
+  } else if (xCord > 132) {
     shiftX = 3;
     shiftXSecond = 1;
   } else {
@@ -76,24 +76,43 @@ export const createElementOnPlan = (elementClone, dropElement, xCord, size, size
     shiftXSecond = 1;
   }
   elementClone.children[0].children[0].innerHTML = (sizeElement === 1) ? buttonOneSize : buttonSize;
-  elementClone.style.left = `${(dropElement.dataset.x - shiftX) * size }px`;
-  elementClone.style.top = `${(dropElement.dataset.y - shiftXSecond) * size }px`;
-  elementClone.dataset.id = generateRandomIndex(1,100)();
+  elementClone.style.left = `${(dropElement.dataset.x - shiftX) * size}px`;
+  elementClone.style.top = `${(dropElement.dataset.y - shiftXSecond) * size}px`;
+  elementClone.dataset.id = generateRandomIndex(1, 100)();
 
 };
+
 export function isEqual(array1, array2) {
   return JSON.stringify(array1) === JSON.stringify(array2);
 }
+
 export function dragCheck(evt, it, afterTwo) {
   const arrTarget = !afterTwo ? this.arrEvtTargetSecond : this.arrEvtTargetFirst;
-  if(isEqual(this.arrEvtTarget, it) || isEqual(arrTarget, it)){
+  if (isEqual(this.arrEvtTarget, it) || isEqual(arrTarget, it)) {
     evt.target.classList.add('plan__cell_error');
-    if(this.arrEvtTarget[0] !== 10 && !afterTwo){
+    if (this.arrEvtTarget[0] !== 10 && !afterTwo) {
       evt.target[NEXT_PREV_ELEMENTS.Next]?.classList?.add('plan__cell_error');
-    } else if(afterTwo){
+    } else if (afterTwo) {
       evt.target[NEXT_PREV_ELEMENTS.Prev]?.classList.add('plan__cell_error');
     }
   } else {
     evt.target.classList?.add('plan__cell_success');
+  }
+}
+
+export function clearCells(size, cordsX, element) {
+  if (size === SIZE_ELEMENTS.SizeTwo && cordsX > COORDINATE_CORD.AfterTwo) {
+    element.previousElementSibling.classList.remove('plan__cell_success');
+  } else if (size === SIZE_ELEMENTS.SizeTwo && cordsX <= COORDINATE_CORD.AfterTwo) {
+    element.nextElementSibling.classList.remove('plan__cell_success');
+  } else if (size === SIZE_ELEMENTS.SizeThree && cordsX <= COORDINATE_CORD.AfterTwo) {
+    element.nextElementSibling.classList.remove('plan__cell_success');
+    element.nextElementSibling.nextElementSibling.classList.remove('plan__cell_success');
+  } else if (size === SIZE_ELEMENTS.SizeThree && cordsX > COORDINATE_CORD.AfterTwo && cordsX <= COORDINATE_CORD.AfterThree) {
+    element.nextElementSibling.classList.remove('plan__cell_success');
+    element.previousElementSibling.classList.remove('plan__cell_success');
+  } else if (size === SIZE_ELEMENTS.SizeThree && cordsX > COORDINATE_CORD.AfterThree) {
+    element.previousElementSibling.classList.remove('plan__cell_success');
+    element.previousElementSibling.previousElementSibling.classList.remove('plan__cell_success');
   }
 }
