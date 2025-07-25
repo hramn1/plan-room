@@ -35,6 +35,9 @@ export const setSizeObj = (elem) => {
 };
 export const addCellSuccess = (planCells, elem, xCord) => {
   planCells.forEach((item) => {
+    if(item.classList.contains('plan__cell_success')) {
+      item.classList.remove('plan__cell_error');
+    }
     if (Number(item.dataset.x) === elem.dataset.x - (xCord <= 66 ? -1 : 1) && Number(item.dataset.y === elem.dataset.y)) {
       item.classList.add('plan__cell_success');
       elem.classList.add('plan__cell_success');

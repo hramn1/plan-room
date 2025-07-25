@@ -67,8 +67,10 @@ export class DragObj {
             if (Number(item.dataset.y) === Math.round((evt.clientY - 120) / 66) && item.dataset.x === '1') {
               item.classList.add('plan__cell_error');
             }
-            console.log(Math.round((evt.clientY + 60)))
-            if (Number(item.dataset.y) === Math.round((evt.clientY + 60)) / 66 && item.dataset.x === '1') {
+            if (Number(item.dataset.y) === Math.round((evt.clientY - 180) / 66) && item.dataset.x === '1') {
+              item.classList.remove('plan__cell_error');
+            }
+            if (Number(item.dataset.y) === Math.round((evt.clientY - 60) / 66) && item.dataset.x === '1') {
               item.classList.remove('plan__cell_error');
             }
           });
@@ -104,22 +106,6 @@ export class DragObj {
   }
 
   dragleave() {
-    document.addEventListener('dragleave', (evt) => {
-      if (evt.target.classList.contains('plan__cell')) {
-        this.dragElementNow = evt.target;
-      }
-      if (!evt.target.classList.contains('plan__cell') && this.dragElementNow.dataset.x === '1') {
-        if (evt.clientY > 120 && evt.clientY < (120 + (6 * 66)) && evt.clientX > 240) {
-          this.planCell.forEach((item) => {
-            if (Number(item.dataset.y) === Math.round((evt.clientY - 120) / 66) && item.dataset.x === '1') {
-              item.classList.remove('plan__cell_error');
-            }
-          });
-        }
-        // this.dragElementNow = evt.target;
-      }
-    });
-
     this.planCell.forEach((it) => {
       this.planGrid.addEventListener('dragleave', (evt) => {
         this.#utilsDragObj(evt);
