@@ -1,33 +1,48 @@
-// class UndoRedo {
-//     constructor() {
-//         this.undoStack = [];
-//         this.redoStack = [];
-//     }
-//
-//     // push the current state onto the undo stack
-//     pushState(state) {
-//         this.undoStack.push(state);
-//         // clear redo stack as we cannot redo after a new state is pushed
-//         this.redoStack = [];
-//     }
-//
-//     // undo the last operation
-//     undo() {
-//         if (this.undoStack.length > 0) {
-//             const state = this.undoStack.pop();
-//             this.redoStack.push(state);
-//             return state;
-//         }
-//         return null;
-//     }
-//
-//     // redo the last operation
-//     redo() {
-//         if (this.redoStack.length > 0) {
-//             const state = this.redoStack.pop();
-//             this.undoStack.push(state);
-//             return state;
-//         }
-//         return null;
-//     }
-// }
+export class HistoryManager {
+  constructor(limit = 30) {
+    this.limit = limit;
+    this.undoStack = [];
+    this.redoStack = [];
+  }
+
+  push(state) {
+    if (!state) {
+      return;
+    }
+
+    this.undoStack.push(structuredClone(state));
+    if (this.undoStack.length > this.limit) {
+      this.undoStack.shift();
+    }
+    this.redoStack = [];
+  }
+
+  undo(currentState) {
+    if (!this.undoStack.length) {
+      return null;
+    }
+
+    if (currentState) {
+      this.redoStack.push(structuredClone(currentState));
+    }
+
+    return this.undoStack.pop();
+  }
+
+  redo(currentState) {
+    if (!this.redoStack.length) {
+      return null;
+    }
+
+    if (currentState) {
+      this.undoStack.push(structuredClone(currentState));
+    }
+
+    return this.redoStack.pop();
+  }
+
+  clear() {
+    this.undoStack = [];
+    this.redoStack = [];
+  }
+}
